@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Writing & Persuasion — 説得と文章の知識ベース</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      background: #f6f6f9;
+      color: #1a1a2e;
+      line-height: 1.7;
+    }
+
+    /* ─── Site Nav ─── */
+    .site-nav { background:#fff; border-bottom:1px solid #e4e4f0; position:sticky; top:0; z-index:200; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+    .nav-inner { max-width:1200px; margin:0 auto; padding:0 20px; height:50px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .nav-brand { font-size:.88rem; font-weight:800; color:#0f0f1a; text-decoration:none; white-space:nowrap; display:flex; align-items:center; gap:6px; }
+    .nav-links { display:flex; gap:2px; flex-wrap:wrap; }
+    .nav-links a { font-size:.76rem; color:#5c5c7a; text-decoration:none; padding:4px 10px; border-radius:6px; font-weight:500; transition:background .15s,color .15s; white-space:nowrap; }
+    .nav-links a:hover { background:#f4f4fa; color:#0f0f1a; }
+    .nav-links a.active { background:#eff6ff; color:#1d4ed8; font-weight:700; }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: #ffffff;
+      border-bottom: 1px solid #e4e4f0;
+      padding: 72px 24px 64px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      color: #0f0f1a;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, #1d4ed8, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc {
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #5c5c7a;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.85;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #0f0f1a;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      color: #9999b0;
+      margin-top: 4px;
+    }
+    .stat-divider {
+      width: 1px;
+      background: #e4e4f0;
+      height: 40px;
+      align-self: center;
+    }
+
+    /* ─── Section ─── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 24px 0;
+    }
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #9999b0;
+      margin-bottom: 20px;
+    }
+
+    /* ─── Cards ─── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 18px;
+      margin-bottom: 60px;
+    }
+
+    .topic-card {
+      background: #ffffff;
+      border: 1px solid #e4e4f0;
+      border-radius: 16px;
+      overflow: hidden;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow .22s, transform .22s, border-color .22s;
+    }
+    .topic-card:hover {
+      box-shadow: 0 12px 32px rgba(0,0,0,.08);
+      transform: translateY(-4px);
+      border-color: #c8c8e0;
+    }
+    .card-top {
+      height: 6px;
+    }
+    .card-body-inner {
+      padding: 22px 22px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-emoji {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .card-category {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .card-title-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f0f1a;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .card-desc-text {
+      font-size: 0.83rem;
+      color: #5c5c7a;
+      line-height: 1.75;
+      flex: 1;
+    }
+    .card-footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #f0f0f8;
+    }
+    .card-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .card-tag {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .card-arrow {
+      font-size: 1rem;
+      color: #c8c8da;
+      flex-shrink: 0;
+      transition: transform .18s, color .18s;
+    }
+    .topic-card:hover .card-arrow {
+      transform: translateX(3px);
+      color: #6666aa;
+    }
+
+    /* Color themes per card */
+    .theme-blue   .card-top { background: linear-gradient(90deg,#1d4ed8,#3b82f6); }
+    .theme-blue   .card-category { color: #1d4ed8; }
+    .theme-blue   .card-tag { background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+
+    .theme-amber  .card-top { background: linear-gradient(90deg,#d97706,#f59e0b); }
+    .theme-amber  .card-category { color: #d97706; }
+    .theme-amber  .card-tag { background:#fffbeb; color:#92400e; border:1px solid #fde68a; }
+
+    .theme-red    .card-top { background: linear-gradient(90deg,#dc2626,#ef4444); }
+    .theme-red    .card-category { color: #dc2626; }
+    .theme-red    .card-tag { background:#fff1f2; color:#be123c; border:1px solid #fecdd3; }
+
+    .theme-teal   .card-top { background: linear-gradient(90deg,#0891b2,#06b6d4); }
+    .theme-teal   .card-category { color: #0891b2; }
+    .theme-teal   .card-tag { background:#ecfeff; color:#0e7490; border:1px solid #a5f3fc; }
+
+    .theme-purple .card-top { background: linear-gradient(90deg,#7c3aed,#8b5cf6); }
+    .theme-purple .card-category { color: #7c3aed; }
+    .theme-purple .card-tag { background:#f5f3ff; color:#6d28d9; border:1px solid #ddd6fe; }
+
+    .theme-green  .card-top { background: linear-gradient(90deg,#16a34a,#22c55e); }
+    .theme-green  .card-category { color: #16a34a; }
+    .theme-green  .card-tag { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
+
+    /* ─── Featured Card (wide) ─── */
+    .cards-grid-wide {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    .topic-card.wide .card-body-inner {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .wide-left { flex-shrink: 0; }
+    .wide-right { flex: 1; }
+    @media(max-width:600px){
+      .topic-card.wide .card-body-inner { flex-direction:column; }
+    }
+
+    /* ─── Learning Path ─── */
+    .path-section {
+      background: #ffffff;
+      border-top: 1px solid #e4e4f0;
+      margin-top: 60px;
+      padding: 60px 24px 70px;
+    }
+    .path-inner {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .path-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0f0f1a;
+      margin-bottom: 8px;
+    }
+    .path-sub {
+      font-size: 0.85rem;
+      color: #7777a0;
+      margin-bottom: 32px;
+    }
+    .path-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .path-step {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      position: relative;
+    }
+    .path-step + .path-step { margin-top: 28px; }
+    .path-step::before {
+      content: '';
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      bottom: -28px;
+      width: 2px;
+      background: #e4e4f0;
+    }
+    .path-step:last-child::before { display: none; }
+    .path-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .path-content { flex: 1; padding-top: 4px; }
+    .path-step-title { font-size: 0.95rem; font-weight: 700; color: #0f0f1a; margin-bottom: 4px; }
+    .path-step-desc  { font-size: 0.82rem; color: #5c5c7a; line-height: 1.7; }
+    .path-step-link  {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: #1d4ed8;
+      text-decoration: none;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .path-step-link:hover { background: #dbeafe; }
+
+    /* ─── Footer ─── */
+    footer {
+      background: #ffffff;
+      border-top: 1px solid #e4e4f0;
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: #aaaacc;
+    }
+    footer strong { color: #5c5c7a; }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">✍️ Writing &amp; Persuasion</a>
+      <div class="nav-links">
+        <a href="index.html" class="active">ホーム</a>
+        <a href="behavioral-economics.html">行動経済学</a>
+        <a href="success.html">SUCCESS</a>
+        <a href="pesona.html">PESONA</a>
+        <a href="pasbecona.html">PASBECONA</a>
+        <a href="pmm.html">PMM</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-eyebrow">📚 Knowledge Base</div>
+    <h1>説得と文章の<br><em>設計を学ぶ</em></h1>
+    <p class="hero-desc">
+      なぜ人は動くのか。どう伝えると伝わるのか。<br>
+      行動経済学の理論からコピーライティングの型まで、
+      説得と文章の知識を体系的にまとめたナレッジベース。
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">5</div>
+        <div class="stat-label">トピック</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-num">30+</div>
+        <div class="stat-label">理論・フレームワーク</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-num">50+</div>
+        <div class="stat-label">実例・ケース</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Cards -->
+  <div class="section">
+    <div class="section-label">すべてのトピック</div>
+    <div class="cards-grid">
+
+      <!-- 行動経済学 -->
+      <a class="topic-card theme-blue" href="behavioral-economics.html">
+        <div class="card-top"></div>
+        <div class="card-body-inner">
+          <span class="card-emoji">🧠</span>
+          <div class="card-category">Foundation</div>
+          <div class="card-title-text">行動経済学</div>
+          <p class="card-desc-text">
+            人はなぜ非合理な選択をするのか。プロスペクト理論・ナッジ・認知バイアスなど
+            説得の土台となる心理・行動科学の理論を体系的に学ぶ。
+          </p>
+          <div class="card-footer-row">
+            <div class="card-tags">
+              <span class="card-tag">プロスペクト理論</span>
+              <span class="card-tag">ナッジ</span>
+              <span class="card-tag">バイアス12種</span>
+            </div>
+            <span class="card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- SUCCESS -->
+      <a class="topic-card theme-purple" href="success.html">
+        <div class="card-top"></div>
+        <div class="card-body-inner">
+          <span class="card-emoji">💡</span>
+          <div class="card-category">Messaging Framework</div>
+          <div class="card-title-text">SUCCESSの法則</div>
+          <p class="card-desc-text">
+            「伝わるアイデア」の6原則。Simple・Unexpected・Concrete・Credible・Emotional・Stories。
+            Made to Stick（Chip &amp; Dan Heath）が提唱した記憶に残るメッセージの設計図。
+          </p>
+          <div class="card-footer-row">
+            <div class="card-tags">
+              <span class="card-tag">6原則</span>
+              <span class="card-tag">メッセージ設計</span>
+            </div>
+            <span class="card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- PESONA -->
+      <a class="topic-card theme-amber" href="pesona.html">
+        <div class="card-top"></div>
+        <div class="card-body-inner">
+          <span class="card-emoji">✍️</span>
+          <div class="card-category">Copywriting Framework</div>
+          <div class="card-title-text">PESONAの法則</div>
+          <p class="card-desc-text">
+            問題→共感→解決策→オファー→絞り込み→行動の6ステップ。
+            神田昌典が提唱した、読者を自然に行動へ導くコピーライティングの基本型。
+          </p>
+          <div class="card-footer-row">
+            <div class="card-tags">
+              <span class="card-tag">6ステップ</span>
+              <span class="card-tag">神田昌典</span>
+            </div>
+            <span class="card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- PASBECONA -->
+      <a class="topic-card theme-red" href="pasbecona.html">
+        <div class="card-top"></div>
+        <div class="card-body-inner">
+          <span class="card-emoji">🚀</span>
+          <div class="card-category">Advanced Copywriting</div>
+          <div class="card-title-text">PASBECONAの法則</div>
+          <p class="card-desc-text">
+            PESONAにBenefit・Evidence・Contentsを追加した9ステップの発展形。
+            高単価・高関与商品で「感情＋論理」の両方から説得する精密な設計図。
+          </p>
+          <div class="card-footer-row">
+            <div class="card-tags">
+              <span class="card-tag">9ステップ</span>
+              <span class="card-tag">PESONA発展形</span>
+            </div>
+            <span class="card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- PMM -->
+      <a class="topic-card theme-green" href="pmm.html">
+        <div class="card-top"></div>
+        <div class="card-body-inner">
+          <span class="card-emoji">📋</span>
+          <div class="card-category">Research & Checklist</div>
+          <div class="card-title-text">PMMサーチシート &amp; セルフチェック</div>
+          <p class="card-desc-text">
+            コピーを書く前のリサーチシート（23項目）と、書いた後のセルフチェックシート（18項目）。
+            BTRNUTSSフレームワークによるヘッドライン評価を含む実践ツール。
+          </p>
+          <div class="card-footer-row">
+            <div class="card-tags">
+              <span class="card-tag">23項目リサーチ</span>
+              <span class="card-tag">BTRNUTSS</span>
+            </div>
+            <span class="card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Learning Path -->
+  <div class="path-section">
+    <div class="path-inner">
+      <div class="section-label" style="margin-bottom:12px;">Learning Path</div>
+      <div class="path-title">おすすめの学習順序</div>
+      <p class="path-sub">初めて学ぶ方は、この順番で読むと理解が深まります。</p>
+      <div class="path-steps">
+
+        <div class="path-step">
+          <div class="path-num" style="background:#1d4ed8;">1</div>
+          <div class="path-content">
+            <div class="path-step-title">🧠 行動経済学で「人が動く理由」を理解する</div>
+            <p class="path-step-desc">すべての説得・コピーライティング技術の土台。なぜ人は非合理な選択をするのかを知ることが、説得設計の出発点。システム1/2・プロスペクト理論・ナッジから始める。</p>
+            <a class="path-step-link" href="behavioral-economics.html">行動経済学を学ぶ →</a>
+          </div>
+        </div>
+
+        <div class="path-step">
+          <div class="path-num" style="background:#7c3aed;">2</div>
+          <div class="path-content">
+            <div class="path-step-title">💡 SUCCESSで「伝わるメッセージ」の原則を掴む</div>
+            <p class="path-step-desc">アイデアを記憶に残す6原則。何かを伝えたいとき、どのように表現すれば相手の頭に残るかの基本を学ぶ。</p>
+            <a class="path-step-link" href="success.html">SUCCESSを学ぶ →</a>
+          </div>
+        </div>
+
+        <div class="path-step">
+          <div class="path-num" style="background:#d97706;">3</div>
+          <div class="path-content">
+            <div class="path-step-title">✍️ PESONAでコピーライティングの「型」を身につける</div>
+            <p class="path-step-desc">6ステップのコピー構成フレームワーク。問題→共感→解決策→オファー→絞り込み→行動の流れを体で覚える。</p>
+            <a class="path-step-link" href="pesona.html">PESONAを学ぶ →</a>
+          </div>
+        </div>
+
+        <div class="path-step">
+          <div class="path-num" style="background:#dc2626;">4</div>
+          <div class="path-content">
+            <div class="path-step-title">🚀 PASBECONAで精度を上げる</div>
+            <p class="path-step-desc">PESONAを使いこなせたら、Benefit・Evidence・Contentsを加えた9ステップへ。高関与商品や長文セールスレターに対応できる応用型。</p>
+            <a class="path-step-link" href="pasbecona.html">PASBECONAを学ぶ →</a>
+          </div>
+        </div>
+
+        <div class="path-step">
+          <div class="path-num" style="background:#16a34a;">5</div>
+          <div class="path-content">
+            <div class="path-step-title">📋 PMMシートで書く前・書いた後を仕組み化する</div>
+            <p class="path-step-desc">コピーを書く前のリサーチと書いた後のチェックを仕組み化。23項目のリサーチシートと18項目のセルフチェックで、ミスを防ぎ品質を担保する。</p>
+            <a class="path-step-link" href="pmm.html">PMMシートを学ぶ →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Writing &amp; Persuasion Knowledge Base</strong> — 説得と文章の設計を学ぶナレッジベース
+  </footer>
+
+</body>
+</html>

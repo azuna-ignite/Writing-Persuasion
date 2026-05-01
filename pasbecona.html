@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PASBECONAの法則</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      background: #f7f7f9;
+      color: #1a1a2e;
+      line-height: 1.7;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: #ffffff;
+      border-bottom: 1px solid #e8e8f0;
+      padding: 80px 24px 56px;
+      text-align: center;
+    }
+    .hero-label {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #0369a1;
+      background: rgba(3,105,161,.08);
+      border: 1px solid rgba(3,105,161,.22);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5.5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      color: #0f0f1a;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, #0369a1, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      margin-top: 8px;
+      font-size: 1rem;
+      color: #5c5c7a;
+      font-weight: 500;
+    }
+    .hero p {
+      margin-top: 18px;
+      font-size: 0.97rem;
+      color: #6a6a8a;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.85;
+    }
+    .hero .source {
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: #aaaacc;
+    }
+
+    /* ─── Compare Banner ─── */
+    .compare-banner {
+      background: #fffbeb;
+      border-bottom: 1px solid #fde68a;
+      padding: 14px 24px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #92400e;
+    }
+    .compare-banner strong { color: #78350f; }
+
+    /* ─── Acronym Flow ─── */
+    .acronym-section {
+      padding: 44px 24px 36px;
+      background: #f7f7f9;
+    }
+    .acronym-flow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .af-item {
+      display: flex;
+      align-items: center;
+    }
+    .letter-block {
+      width: 62px;
+      height: 62px;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+      transition: transform .2s;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+    .letter-block:hover { transform: translateY(-5px) scale(1.08); }
+    .lb-letter { font-size: 1.7rem; font-weight: 900; color: #fff; line-height: 1; }
+    .lb-word   { font-size: 0.42rem; font-weight: 700; letter-spacing: 0.5px; color: rgba(255,255,255,.72); margin-top: 2px; }
+
+    .lb-p1 { background: linear-gradient(135deg,#d97706,#b45309); }
+    .lb-a1 { background: linear-gradient(135deg,#ef4444,#dc2626); }
+    .lb-s  { background: linear-gradient(135deg,#10b981,#059669); }
+    .lb-b  { background: linear-gradient(135deg,#f59e0b,#d97706); }
+    .lb-e  { background: linear-gradient(135deg,#3b82f6,#2563eb); }
+    .lb-c  { background: linear-gradient(135deg,#06b6d4,#0891b2); }
+    .lb-o  { background: linear-gradient(135deg,#8b5cf6,#7c3aed); }
+    .lb-n  { background: linear-gradient(135deg,#ec4899,#db2777); }
+    .lb-a2 { background: linear-gradient(135deg,#f43f5e,#e11d48); }
+
+    .af-arrow { font-size: 1rem; color: #c8c8da; margin: 0 5px; }
+
+    /* ─── Steps ─── */
+    .steps {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .step {
+      background: #ffffff;
+      border: 1px solid #e4e4f0;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: box-shadow .25s, transform .25s;
+    }
+    .step:hover {
+      box-shadow: 0 10px 28px rgba(0,0,0,.07);
+      transform: translateY(-3px);
+    }
+
+    .step-inner {
+      display: flex;
+    }
+
+    /* left badge */
+    .step-badge {
+      width: 76px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 24px 0;
+    }
+    .step-badge-letter { font-size: 2rem; font-weight: 900; color: #fff; line-height: 1; }
+    .step-badge-num    { font-size: 0.58rem; color: rgba(255,255,255,.7); font-weight: 700; letter-spacing: 1px; }
+    .badge-p1 { background: linear-gradient(160deg,#d97706,#b45309); }
+    .badge-a1 { background: linear-gradient(160deg,#ef4444,#dc2626); }
+    .badge-s  { background: linear-gradient(160deg,#10b981,#059669); }
+    .badge-b  { background: linear-gradient(160deg,#f59e0b,#d97706); }
+    .badge-e  { background: linear-gradient(160deg,#3b82f6,#2563eb); }
+    .badge-c  { background: linear-gradient(160deg,#06b6d4,#0891b2); }
+    .badge-o  { background: linear-gradient(160deg,#8b5cf6,#7c3aed); }
+    .badge-n  { background: linear-gradient(160deg,#ec4899,#db2777); }
+    .badge-a2 { background: linear-gradient(160deg,#f43f5e,#e11d48); }
+
+    /* right content */
+    .step-content { flex: 1; }
+
+    .step-header {
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid #f0f0f8;
+    }
+    .step-kw {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .kw-p1 { color: #d97706; }
+    .kw-a1 { color: #ef4444; }
+    .kw-s  { color: #10b981; }
+    .kw-b  { color: #f59e0b; }
+    .kw-e  { color: #3b82f6; }
+    .kw-c  { color: #06b6d4; }
+    .kw-o  { color: #8b5cf6; }
+    .kw-n  { color: #ec4899; }
+    .kw-a2 { color: #f43f5e; }
+
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f0f1a;
+    }
+    .step-title .en {
+      font-size: 0.73rem;
+      font-weight: 500;
+      color: #9999b0;
+      margin-left: 6px;
+    }
+    .step-role {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 0.73rem;
+      color: #7777a0;
+      background: #f4f4fa;
+      border: 1px solid #e4e4f0;
+      border-radius: 20px;
+      padding: 2px 10px;
+    }
+
+    .step-body {
+      padding: 16px 22px 20px;
+    }
+    .step-desc {
+      font-size: 0.87rem;
+      color: #4a4a6a;
+      line-height: 1.85;
+      margin-bottom: 14px;
+    }
+    .step-desc strong { color: #1a1a2e; }
+
+    /* example */
+    .example-box {
+      background: #f9f9fc;
+      border: 1px solid #ebebf5;
+      border-radius: 10px;
+      padding: 13px 16px;
+      margin-bottom: 12px;
+    }
+    .example-label {
+      font-size: 0.63rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #aaaacc;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+    .example-text {
+      font-size: 0.84rem;
+      color: #3a3a5a;
+      line-height: 1.75;
+      font-style: italic;
+    }
+    .example-text em { font-style: normal; font-weight: 600; color: #2a2a4a; }
+
+    /* tips */
+    .step-tips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .tip-tag {
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .tip-p1 { background: rgba(217,119,6,.08);  color: #b45309; border: 1px solid rgba(217,119,6,.2); }
+    .tip-a1 { background: rgba(239,68,68,.08);  color: #dc2626; border: 1px solid rgba(239,68,68,.2); }
+    .tip-s  { background: rgba(16,185,129,.08); color: #059669; border: 1px solid rgba(16,185,129,.2);}
+    .tip-b  { background: rgba(245,158,11,.08); color: #d97706; border: 1px solid rgba(245,158,11,.2);}
+    .tip-e  { background: rgba(59,130,246,.08); color: #2563eb; border: 1px solid rgba(59,130,246,.2);}
+    .tip-c  { background: rgba(6,182,212,.08);  color: #0891b2; border: 1px solid rgba(6,182,212,.2); }
+    .tip-o  { background: rgba(139,92,246,.08); color: #7c3aed; border: 1px solid rgba(139,92,246,.2);}
+    .tip-n  { background: rgba(236,72,153,.08); color: #db2777; border: 1px solid rgba(236,72,153,.2);}
+    .tip-a2 { background: rgba(244,63,94,.08);  color: #e11d48; border: 1px solid rgba(244,63,94,.2); }
+
+    /* ─── PESONA diff note ─── */
+    .diff-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+      color: #92400e;
+      line-height: 1.65;
+    }
+    .diff-note-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .diff-note strong { color: #78350f; }
+
+    /* ─── Summary ─── */
+    .summary-wrap {
+      background: #ffffff;
+      border-top: 1px solid #e8e8f0;
+      padding: 60px 24px 70px;
+    }
+    .summary {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .summary h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: #0f0f1a;
+      text-align: center;
+    }
+
+    /* comparison table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+      margin-bottom: 32px;
+    }
+    .compare-table th {
+      background: #f4f4fa;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #6666a0;
+      border-bottom: 2px solid #e4e4f0;
+    }
+    .compare-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f0f0f8;
+      color: #3a3a5a;
+      vertical-align: top;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .badge-cell {
+      font-weight: 800;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+    .new-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      font-weight: 700;
+      background: #dcfce7;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+      border-radius: 4px;
+      padding: 1px 5px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 20px 28px;
+      background: #f9f9fc;
+      border: 1px solid #e4e4f0;
+      border-left: 3px solid #0369a1;
+      border-radius: 0 10px 10px 0;
+      font-style: italic;
+      color: #5c5c7a;
+      font-size: 0.88rem;
+      line-height: 1.8;
+    }
+    .quote cite {
+      display: block;
+      margin-top: 8px;
+      font-style: normal;
+      font-size: 0.76rem;
+      color: #9999b0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.75rem;
+      color: #b0b0c8;
+      border-top: 1px solid #e8e8f0;
+      background: #ffffff;
+    }
+  
+    /* ─── Site Nav ─── */
+    .site-nav{background:#fff;border-bottom:1px solid #e4e4f0;position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+    .nav-inner{max-width:1200px;margin:0 auto;padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+    .nav-brand{font-size:.88rem;font-weight:800;color:#0f0f1a;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+    .nav-links{display:flex;gap:2px;flex-wrap:wrap;}
+    .nav-links a{font-size:.76rem;color:#5c5c7a;text-decoration:none;padding:4px 10px;border-radius:6px;font-weight:500;transition:background .15s,color .15s;white-space:nowrap;}
+    .nav-links a:hover{background:#f4f4fa;color:#0f0f1a;}
+    .nav-links a.active{background:#eff6ff;color:#1d4ed8;font-weight:700;}
+
+    </style>
+</head>
+<body>
+<nav class="site-nav"><div class="nav-inner"><a class="nav-brand" href="index.html">✍️ Writing &amp; Persuasion</a><div class="nav-links"><a href="index.html">ホーム</a><a href="behavioral-economics.html">行動経済学</a><a href="success.html">SUCCESS</a><a href="pesona.html">PESONA</a><a href="pasbecona.html" class="active">PASBECONA</a><a href="pmm.html">PMM</a></div></div></nav>
+
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-label">Advanced Copywriting Framework</div>
+    <h1>読者を<span>深く動かす</span><br>9ステップの設計図</h1>
+    <p class="hero-sub">PESONA → PASBECONA へ、さらに深化したコピーの型</p>
+    <p>
+      PESONAの6ステップをベースに、<strong>Benefit・Evidence・Contents</strong>の3要素を加えた発展形。
+      感情だけでなく<strong>論理的根拠・実績証明・具体的な中身</strong>を組み込むことで、
+      高単価・高関与の商品にも対応できる精密なフレームワーク。
+    </p>
+    <p class="source">📝 神田昌典が提唱した日本発マーケティングフレームワーク（PESONA拡張版）</p>
+  </section>
+
+  <!-- Compare Banner -->
+  <div class="compare-banner">
+    💡 <strong>PESONAとの違い：</strong>
+    S（Solution）のあとに <strong>B（Benefit）→ E（Evidence）→ C（Contents）</strong> の3ステップが追加。説得力と信頼性が大幅に強化されている。
+  </div>
+
+  <!-- Acronym Flow -->
+  <div class="acronym-section">
+    <div class="acronym-flow">
+      <div class="af-item"><div class="letter-block lb-p1"><span class="lb-letter">P</span><span class="lb-word">Problem</span></div></div>
+      <span class="af-arrow">→</span>
+      <div class="af-item"><div class="letter-block lb-a1"><span class="lb-letter">A</span><span class="lb-word">Affinity</span></div></div>
+      <span class="af-arrow">→</span>
+      <div class="af-item"><div class="letter-block lb-s"><span class="lb-letter">S</span><span class="lb-word">Solution</span></div></div>
+      <span class="af-arrow">→</span>
+      <div class="af-item"><div class="letter-block lb-b"><span class="lb-letter">B</span><span class="lb-word">Benefit</span></div></div>
+      <span class="af-arrow">→</span>
+      <div class="af-item"><div class="letter-block lb-e"><span class="lb-letter">E</span><span class="lb-word">Evidence</span></div></div>
+      <span class="af-arrow">→</span>
+      <div class="af-item"><div class="letter-block lb-c"><span class="lb-letter">C</span><span class="lb-word">Contents</span></div></div>
+      <span class="af-arrow">→</span>
+      <div class="af-item"><div class="letter-block lb-o"><span class="lb-letter">O</span><span class="lb-word">Offer</span></div></div>
+      <span class="af-arrow">→</span>
+      <div class="af-item"><div class="letter-block lb-n"><span class="lb-letter">N</span><span class="lb-word">Narrow</span></div></div>
+      <span class="af-arrow">→</span>
+      <div class="af-item"><div class="letter-block lb-a2"><span class="lb-letter">A</span><span class="lb-word">Action</span></div></div>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps">
+
+    <!-- P: Problem -->
+    <div class="step">
+      <div class="step-inner">
+        <div class="step-badge badge-p1">
+          <span class="step-badge-letter">P</span>
+          <span class="step-badge-num">STEP 1</span>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-kw kw-p1">P — PROBLEM</div>
+            <div class="step-title">問題提起 <span class="en">Problem</span></div>
+            <span class="step-role">感情フェーズ：注意を引く</span>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">
+              読者が抱えている<strong>悩み・不満・痛みを具体的に言語化</strong>することから始める。
+              「この文章は自分のことだ」と感じさせるほど精度が高いと、
+              読者は自然に読み続ける。ターゲットを絞り込むほど刺さる描写になる。
+            </p>
+            <div class="example-box">
+              <div class="example-label">例文（ビジネス向けSaaSの場合）</div>
+              <p class="example-text">
+                「毎月の売上レポートを作るのに、<em>丸一日かかっていませんか？</em>
+                Excelのセルを手動でコピペして、グラフを貼り直して、
+                メールで送って……気づけば肝心の"分析"に時間が使えない。」
+              </p>
+            </div>
+            <div class="step-tips">
+              <span class="tip-tag tip-p1">具体的な場面で描く</span>
+              <span class="tip-tag tip-p1">読者の言葉を使う</span>
+              <span class="tip-tag tip-p1">「あなた」と呼びかける</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A: Affinity -->
+    <div class="step">
+      <div class="step-inner">
+        <div class="step-badge badge-a1">
+          <span class="step-badge-letter">A</span>
+          <span class="step-badge-num">STEP 2</span>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-kw kw-a1">A — AFFINITY</div>
+            <div class="step-title">親近感・共感 <span class="en">Affinity</span></div>
+            <span class="step-role">感情フェーズ：信頼を築く</span>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">
+              PESONAの「E（Empathy）」に相当するステップ。
+              「私も同じ状況だった」「あなたの気持ちはわかる」と寄り添い、
+              <strong>売り込みモードに入る前に信頼関係を構築</strong>する。
+              批判・否定は禁物。徹底的に共感する。
+            </p>
+            <div class="example-box">
+              <div class="example-label">例文</div>
+              <p class="example-text">
+                「実は私も3年前、同じ状況でした。
+                <em>営業数字を毎週月曜の朝までに仕上げるために、毎週日曜の夜を潰していました。</em>
+                だから、あなたが「また同じ作業か」とため息をつく気持ちは、痛いほどわかります。」
+              </p>
+            </div>
+            <div class="step-tips">
+              <span class="tip-tag tip-a1">自分の失敗談を語る</span>
+              <span class="tip-tag tip-a1">感情に名前をつける</span>
+              <span class="tip-tag tip-a1">批判しない・否定しない</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S: Solution -->
+    <div class="step">
+      <div class="step-inner">
+        <div class="step-badge badge-s">
+          <span class="step-badge-letter">S</span>
+          <span class="step-badge-num">STEP 3</span>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-kw kw-s">S — SOLUTION</div>
+            <div class="step-title">解決策の提示 <span class="en">Solution</span></div>
+            <span class="step-role">論理フェーズ：方向性を示す</span>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">
+              共感で信頼を得たあと、「なぜ問題が解決できないのか（根本原因）」を明かし、
+              そのうえで<strong>解決の方向性を提示</strong>する。
+              ここではまだ商品名を出さず、<strong>考え方・アプローチ</strong>レベルで語る。
+              読者に「そういうことか！」という気づきを与えるステップ。
+            </p>
+            <div class="example-box">
+              <div class="example-label">例文</div>
+              <p class="example-text">
+                「実は多くの企業でレポート作業が終わらない原因は、
+                <em>データの「収集」と「可視化」が手作業で分断されていること</em>にあります。
+                この2つを自動でつなぐ仕組みさえあれば、週次レポートは5分で完成します。」
+              </p>
+            </div>
+            <div class="step-tips">
+              <span class="tip-tag tip-s">根本原因を先に明かす</span>
+              <span class="tip-tag tip-s">商品名はまだ出さない</span>
+              <span class="tip-tag tip-s">「なるほど」を引き出す</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B: Benefit -->
+    <div class="step">
+      <div class="step-inner">
+        <div class="step-badge badge-b">
+          <span class="step-badge-letter">B</span>
+          <span class="step-badge-num">STEP 4</span>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-kw kw-b">B — BENEFIT &nbsp;<span style="font-size:.65rem;background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0;border-radius:4px;padding:1px 5px;font-weight:700;">PASBECONAで追加</span></div>
+            <div class="step-title">ベネフィット <span class="en">Benefit</span></div>
+            <span class="step-role">論理フェーズ：得られる未来を描く</span>
+          </div>
+          <div class="step-body">
+            <div class="diff-note">
+              <span class="diff-note-icon">✦</span>
+              <span>PESONAにはないステップ。解決策を提示した直後に「<strong>それを使うと何が変わるのか</strong>」を具体的に描く。機能（Feature）ではなく、<strong>変化後の感情・生活・数字</strong>（Benefit）で語ることが重要。</span>
+            </div>
+            <p class="step-desc">
+              「〇〇ができる」ではなく<strong>「〇〇になれる」</strong>という視点で書く。
+              ビフォー/アフターを対比させると変化が鮮明に伝わる。
+              読者が「それが手に入るなら欲しい」と思える状態を作ること。
+            </p>
+            <div class="example-box">
+              <div class="example-label">例文</div>
+              <p class="example-text">
+                「週次レポートが自動化されると——<br>
+                <em>毎週月曜の朝、コーヒーを飲みながら「分析」だけに集中できます。</em>
+                データ収集に使っていた年間240時間が、戦略立案に使えるようになります。」
+              </p>
+            </div>
+            <div class="step-tips">
+              <span class="tip-tag tip-b">機能ではなく変化で語る</span>
+              <span class="tip-tag tip-b">ビフォー／アフターを対比</span>
+              <span class="tip-tag tip-b">数字で変化量を見せる</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E: Evidence -->
+    <div class="step">
+      <div class="step-inner">
+        <div class="step-badge badge-e">
+          <span class="step-badge-letter">E</span>
+          <span class="step-badge-num">STEP 5</span>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-kw kw-e">E — EVIDENCE &nbsp;<span style="font-size:.65rem;background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0;border-radius:4px;padding:1px 5px;font-weight:700;">PASBECONAで追加</span></div>
+            <div class="step-title">証拠・実績 <span class="en">Evidence</span></div>
+            <span class="step-role">論理フェーズ：信頼を証明する</span>
+          </div>
+          <div class="step-body">
+            <div class="diff-note">
+              <span class="diff-note-icon">✦</span>
+              <span>PESONAにはないステップ。「ベネフィット（得られる未来）」を提示した直後、<strong>「本当に？」という疑念を証拠で打ち消す</strong>。高単価・高関与商品ほどこのステップが重要になる。</span>
+            </div>
+            <p class="step-desc">
+              使える証拠の種類は多い——<strong>顧客の声・実績数字・第三者機関の認証・メディア掲載・ビフォーアフターの画像・権威者の推薦</strong>など。
+              「言っていること」から「証明されていること」に変換することで、
+              読者の「半信半疑」を「信頼」に変える。
+            </p>
+            <div class="example-box">
+              <div class="example-label">例文</div>
+              <p class="example-text">
+                「導入した327社のうち、<em>94%が「レポート作成時間が週3時間以上削減された」と回答</em>（2025年自社調査）。
+                ▶ 株式会社〇〇 営業部長・田中様：『月曜の朝が別世界になった』」
+              </p>
+            </div>
+            <div class="step-tips">
+              <span class="tip-tag tip-e">第三者の声を使う</span>
+              <span class="tip-tag tip-e">数字は出典付きで</span>
+              <span class="tip-tag tip-e">具体的な固有名詞</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C: Contents -->
+    <div class="step">
+      <div class="step-inner">
+        <div class="step-badge badge-c">
+          <span class="step-badge-letter">C</span>
+          <span class="step-badge-num">STEP 6</span>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-kw kw-c">C — CONTENTS &nbsp;<span style="font-size:.65rem;background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0;border-radius:4px;padding:1px 5px;font-weight:700;">PASBECONAで追加</span></div>
+            <div class="step-title">商品の中身・詳細 <span class="en">Contents</span></div>
+            <span class="step-role">論理フェーズ：具体的に見せる</span>
+          </div>
+          <div class="step-body">
+            <div class="diff-note">
+              <span class="diff-note-icon">✦</span>
+              <span>PESONAにはないステップ。証拠で信頼を得た後、ようやく<strong>商品・サービスの具体的な内容</strong>を説明する。機能一覧ではなく「どう機能して、なぜ変化が起きるか」の<strong>仕組み・ストーリー</strong>で語る。</span>
+            </div>
+            <p class="step-desc">
+              ここで初めて商品の詳細を見せる。ただし<strong>機能の羅列にしない</strong>こと。
+              各機能が「どのベネフィットに繋がるか」を対応させながら説明すると、
+              読者は「なるほど、だからあの効果が出るんだ」と腹落ちする。
+            </p>
+            <div class="example-box">
+              <div class="example-label">例文</div>
+              <p class="example-text">
+                「『〇〇 Analytics』は3つの機能で構成されています。<br>
+                <em>①自動データ収集：30以上のツールと連携し、毎朝6時に最新データを自動取得。<br>
+                ②AIレポート生成：前週比・目標達成率を自動計算し、ワンクリックでPDF出力。<br>
+                ③Slack通知：異常値を即座にアラート。</em>」
+              </p>
+            </div>
+            <div class="step-tips">
+              <span class="tip-tag tip-c">機能→ベネフィットで対応</span>
+              <span class="tip-tag tip-c">仕組みをストーリーで</span>
+              <span class="tip-tag tip-c">視覚要素（図・画像）も活用</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- O: Offer -->
+    <div class="step">
+      <div class="step-inner">
+        <div class="step-badge badge-o">
+          <span class="step-badge-letter">O</span>
+          <span class="step-badge-num">STEP 7</span>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-kw kw-o">O — OFFER</div>
+            <div class="step-title">提案・オファー <span class="en">Offer</span></div>
+            <span class="step-role">クロージングフェーズ：条件を提示</span>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">
+              ベネフィット・証拠・中身を示したあと、<strong>価格・特典・保証などの取引条件</strong>を提示する。
+              B→E→Cで価値を積み上げてからオファーに入るため、価格への抵抗感が大幅に下がる。
+              「商品」ではなく<strong>「投資対効果」の文脈</strong>で価格を語る。
+            </p>
+            <div class="example-box">
+              <div class="example-label">例文</div>
+              <p class="example-text">
+                「月額38,000円（税別）。レポート作業で失われていた月20時間を換算すると、
+                <em>人件費だけで月10万円以上のコスト削減に相当します。</em>
+                初月無料トライアル＋30日間全額返金保証付き。」
+              </p>
+            </div>
+            <div class="step-tips">
+              <span class="tip-tag tip-o">ROIの文脈で価格を語る</span>
+              <span class="tip-tag tip-o">特典・保証を明示</span>
+              <span class="tip-tag tip-o">リスクリバーサルを入れる</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- N: Narrow down -->
+    <div class="step">
+      <div class="step-inner">
+        <div class="step-badge badge-n">
+          <span class="step-badge-letter">N</span>
+          <span class="step-badge-num">STEP 8</span>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-kw kw-n">N — NARROW DOWN</div>
+            <div class="step-title">絞り込み <span class="en">Narrow Down</span></div>
+            <span class="step-role">クロージングフェーズ：希少性・緊急性</span>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">
+              対象者・期限・数量を絞ることで<strong>希少性と緊急性</strong>を生み出す。
+              「誰でもどうぞ」より「この人向け」の方が、ターゲットに刺さる。
+              また「向かない人」を正直に書くことで、逆に信頼感が増す。
+              絞り込みは<strong>排除ではなく、選別による価値の強化</strong>。
+            </p>
+            <div class="example-box">
+              <div class="example-label">例文</div>
+              <p class="example-text">
+                「この価格でのご提供は<em>今月末まで、新規10社限定</em>です。
+                ただし、Excelで十分と感じている方・データが月10件未満の方には
+                オーバースペックになりますので、お勧めしていません。」
+              </p>
+            </div>
+            <div class="step-tips">
+              <span class="tip-tag tip-n">期限を明示</span>
+              <span class="tip-tag tip-n">数量限定を設ける</span>
+              <span class="tip-tag tip-n">「向かない人」も正直に書く</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A: Action -->
+    <div class="step">
+      <div class="step-inner">
+        <div class="step-badge badge-a2">
+          <span class="step-badge-letter">A</span>
+          <span class="step-badge-num">STEP 9</span>
+        </div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-kw kw-a2">A — ACTION</div>
+            <div class="step-title">行動喚起 <span class="en">Action</span></div>
+            <span class="step-role">クロージングフェーズ：一つの行動へ</span>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">
+              今すぐ取るべき<strong>具体的なアクションを一つだけ</strong>明示する。
+              選択肢が多いほど人は動けなくなる（決定回避の法則）。
+              「ボタンを押す」「電話する」「登録する」など行動を一つに絞り、
+              <strong>行動後に何が起きるか</strong>を描いて背中を押す。
+            </p>
+            <div class="example-box">
+              <div class="example-label">例文</div>
+              <p class="example-text">
+                「下のボタンから、無料トライアルをお申し込みください。<em>2分で完了します。</em>
+                申し込み後、担当者から24時間以内にご連絡し、初期設定を無料でサポートします。
+                来週の月曜、レポートを自動で受け取る体験を——」
+              </p>
+            </div>
+            <div class="step-tips">
+              <span class="tip-tag tip-a2">行動は一つだけ</span>
+              <span class="tip-tag tip-a2">所要時間を伝える</span>
+              <span class="tip-tag tip-a2">行動後の未来を描く</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-wrap">
+    <div class="summary">
+      <h2>PESONA vs PASBECONA — 何が違うのか</h2>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>ステップ</th>
+            <th>PESONA</th>
+            <th>PASBECONA</th>
+            <th>追加の意図</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="badge-cell" style="color:#d97706">P</td>
+            <td>Problem（問題提起）</td>
+            <td>Problem（問題提起）</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="badge-cell" style="color:#ef4444">E / A</td>
+            <td>Empathy（共感）</td>
+            <td>Affinity（親近感）</td>
+            <td>名称変更のみ、役割は同じ</td>
+          </tr>
+          <tr>
+            <td class="badge-cell" style="color:#10b981">S</td>
+            <td>Solution（解決策）</td>
+            <td>Solution（解決策）</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="badge-cell" style="color:#f59e0b">B</td>
+            <td style="color:#aaaacc">なし</td>
+            <td>Benefit（ベネフィット）<span class="new-badge">NEW</span></td>
+            <td>「機能→変化後の感情」で欲求を高める</td>
+          </tr>
+          <tr>
+            <td class="badge-cell" style="color:#3b82f6">E</td>
+            <td style="color:#aaaacc">なし</td>
+            <td>Evidence（証拠）<span class="new-badge">NEW</span></td>
+            <td>実績・第三者の声で疑念を消す</td>
+          </tr>
+          <tr>
+            <td class="badge-cell" style="color:#06b6d4">C</td>
+            <td style="color:#aaaacc">なし</td>
+            <td>Contents（商品の中身）<span class="new-badge">NEW</span></td>
+            <td>信頼を得てから詳細を見せる順番を確立</td>
+          </tr>
+          <tr>
+            <td class="badge-cell" style="color:#8b5cf6">O</td>
+            <td>Offer（提案）</td>
+            <td>Offer（提案）</td>
+            <td>BECで価値を積んでからオファーするため効果大</td>
+          </tr>
+          <tr>
+            <td class="badge-cell" style="color:#ec4899">N</td>
+            <td>Narrow Down（絞り込み）</td>
+            <td>Narrow Down（絞り込み）</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="badge-cell" style="color:#f43f5e">A</td>
+            <td>Action（行動）</td>
+            <td>Action（行動）</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="quote">
+        「PESONAは感情で動かす地図。PASBECONAはそこに"なぜ信じるか"という理性の橋を架けた、
+        より高度な設計図だ。高関与・高単価の商品ほど、B・E・Cの3ステップが購買の分岐点になる」
+        <cite>— 神田昌典「禁断のセールスコピーライティング」より</cite>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    PASBECONA法則 — 神田昌典 提唱 · Generated with Claude Code
+  </footer>
+
+</body>
+</html>

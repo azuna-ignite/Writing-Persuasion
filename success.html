@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUCCESSの設計思想</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      background: #f7f7f9;
+      color: #1a1a2e;
+      line-height: 1.7;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      background: #ffffff;
+      border-bottom: 1px solid #e8e8f0;
+    }
+    .hero-label {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #5b5bd6;
+      background: rgba(91,91,214,.08);
+      border: 1px solid rgba(91,91,214,.2);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      color: #0f0f1a;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, #5b5bd6, #9d4edd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      color: #5c5c7a;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero .source {
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: #9999b0;
+    }
+
+    /* ─── Acronym Strip ─── */
+    .acronym-strip {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 40px 24px;
+      background: #f7f7f9;
+    }
+    .letter-block {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      cursor: default;
+      transition: transform .2s;
+    }
+    .letter-block:hover { transform: translateY(-4px) scale(1.08); }
+    .lb-s1 { background: linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff; }
+    .lb-u  { background: linear-gradient(135deg,#0891b2,#0e7490); color:#fff; }
+    .lb-c1 { background: linear-gradient(135deg,#16a34a,#15803d); color:#fff; }
+    .lb-c2 { background: linear-gradient(135deg,#ca8a04,#b45309); color:#fff; }
+    .lb-e  { background: linear-gradient(135deg,#dc2626,#b91c1c); color:#fff; }
+    .lb-s2 { background: linear-gradient(135deg,#9333ea,#7e22ce); color:#fff; }
+
+    /* ─── Cards Grid ─── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e4e4f0;
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .card:hover {
+      border-color: #c8c8e0;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,.07);
+    }
+
+    .card-s1::before { background: linear-gradient(90deg,#4f46e5,#7c3aed); }
+    .card-u::before  { background: linear-gradient(90deg,#0891b2,#0e7490); }
+    .card-c1::before { background: linear-gradient(90deg,#16a34a,#15803d); }
+    .card-c2::before { background: linear-gradient(90deg,#ca8a04,#b45309); }
+    .card-e::before  { background: linear-gradient(90deg,#dc2626,#b91c1c); }
+    .card-s2::before { background: linear-gradient(90deg,#9333ea,#7e22ce); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .card-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icon-s1 { background: rgba(79,70,229,.1); }
+    .icon-u  { background: rgba(8,145,178,.1); }
+    .icon-c1 { background: rgba(22,163,74,.1); }
+    .icon-c2 { background: rgba(202,138,4,.1); }
+    .icon-e  { background: rgba(220,38,38,.1); }
+    .icon-s2 { background: rgba(147,51,234,.1); }
+
+    .card-title {
+      flex: 1;
+    }
+    .card-letter {
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .card-s1 .card-letter { color: #4f46e5; }
+    .card-u  .card-letter { color: #0891b2; }
+    .card-c1 .card-letter { color: #16a34a; }
+    .card-c2 .card-letter { color: #ca8a04; }
+    .card-e  .card-letter { color: #dc2626; }
+    .card-s2 .card-letter { color: #9333ea; }
+
+    .card-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0f0f1a;
+    }
+    .card-name .en {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #9999b0;
+      margin-left: 6px;
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: #4a4a6a;
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+    .card-desc strong { color: #1a1a2e; }
+
+    .card-bad-good {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .bg-box {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+    .bg-bad {
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+    }
+    .bg-good {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+    }
+    .bg-label {
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      font-weight: 700;
+      opacity: .7;
+      margin-bottom: 4px;
+    }
+
+    /* ─── Summary ─── */
+    .summary {
+      max-width: 760px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .summary h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #0f0f1a;
+    }
+    .summary p {
+      font-size: 0.92rem;
+      color: #5c5c7a;
+      line-height: 1.85;
+    }
+    .summary p strong { color: #1a1a2e; }
+    .summary .quote {
+      margin-top: 28px;
+      padding: 20px 28px;
+      background: #ffffff;
+      border: 1px solid #e4e4f0;
+      border-left: 3px solid #5b5bd6;
+      border-radius: 0 10px 10px 0;
+      text-align: left;
+      font-style: italic;
+      color: #5c5c7a;
+      font-size: 0.9rem;
+    }
+    .summary .quote cite {
+      display: block;
+      margin-top: 8px;
+      font-style: normal;
+      font-size: 0.78rem;
+      color: #9999b0;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.75rem;
+      color: #b0b0c8;
+      border-top: 1px solid #e8e8f0;
+      background: #ffffff;
+    }
+  
+    /* ─── Site Nav ─── */
+    .site-nav{background:#fff;border-bottom:1px solid #e4e4f0;position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+    .nav-inner{max-width:1200px;margin:0 auto;padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+    .nav-brand{font-size:.88rem;font-weight:800;color:#0f0f1a;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+    .nav-links{display:flex;gap:2px;flex-wrap:wrap;}
+    .nav-links a{font-size:.76rem;color:#5c5c7a;text-decoration:none;padding:4px 10px;border-radius:6px;font-weight:500;transition:background .15s,color .15s;white-space:nowrap;}
+    .nav-links a:hover{background:#f4f4fa;color:#0f0f1a;}
+    .nav-links a.active{background:#eff6ff;color:#1d4ed8;font-weight:700;}
+
+    </style>
+</head>
+<body>
+<nav class="site-nav"><div class="nav-inner"><a class="nav-brand" href="index.html">✍️ Writing &amp; Persuasion</a><div class="nav-links"><a href="index.html">ホーム</a><a href="behavioral-economics.html">行動経済学</a><a href="success.html" class="active">SUCCESS</a><a href="pesona.html">PESONA</a><a href="pasbecona.html">PASBECONA</a><a href="pmm.html">PMM</a></div></div></nav>
+
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-label">Design Philosophy</div>
+    <h1>アイデアを<br><span>伝わる</span>ものにする技術</h1>
+    <p>
+      なぜあるメッセージは記憶に残り、<br>
+      別のメッセージはすぐ忘れられるのか。<br>
+      その答えが <strong>SUCCESS</strong> の6原則に凝縮されている。
+    </p>
+    <p class="source">📖 Chip Heath &amp; Dan Heath「Made to Stick」(2007) より</p>
+  </section>
+
+  <!-- Acronym Strip -->
+  <div class="acronym-strip">
+    <div class="letter-block lb-s1">S</div>
+    <div class="letter-block lb-u">U</div>
+    <div class="letter-block lb-c1">C</div>
+    <div class="letter-block lb-c2">C</div>
+    <div class="letter-block lb-e">E</div>
+    <div class="letter-block lb-s2">S</div>
+  </div>
+
+  <!-- Cards -->
+  <div class="cards">
+
+    <!-- Simple -->
+    <div class="card card-s1">
+      <div class="card-header">
+        <div class="card-icon icon-s1">🎯</div>
+        <div class="card-title">
+          <div class="card-letter">S — SIMPLE</div>
+          <div class="card-name">シンプル <span class="en">Simple</span></div>
+        </div>
+      </div>
+      <p class="card-desc">
+        核心となる一つのメッセージを見つけ、徹底的に削ぎ落とす。
+        シンプルとは「短い」ではなく、<strong>最も重要なことだけ残す</strong>こと。
+        「もし一つしか伝えられないとしたら、何を伝えるか？」が出発点。
+      </p>
+      <div class="card-bad-good">
+        <div class="bg-box bg-bad">
+          <div class="bg-label">✗ BAD</div>
+          「品質・コスト・スピード・安全性・顧客満足・環境配慮をバランスよく追求します」
+        </div>
+        <div class="bg-box bg-good">
+          <div class="bg-label">✓ GOOD</div>
+          「Southwest Airlines は格安航空会社です」（他はすべてそこから判断できる）
+        </div>
+      </div>
+    </div>
+
+    <!-- Unexpected -->
+    <div class="card card-u">
+      <div class="card-header">
+        <div class="card-icon icon-u">⚡</div>
+        <div class="card-title">
+          <div class="card-letter">U — UNEXPECTED</div>
+          <div class="card-name">意外性 <span class="en">Unexpected</span></div>
+        </div>
+      </div>
+      <p class="card-desc">
+        人は予測を破られたとき、注意を向ける。
+        <strong>ギャップを意図的に作り</strong>、「なぜ？」「どうして？」という
+        好奇心のスイッチを入れること。答えを見せる前に、まず問いを生む。
+      </p>
+      <div class="card-bad-good">
+        <div class="bg-box bg-bad">
+          <div class="bg-label">✗ BAD</div>
+          「シートベルトをしてください。安全のため大切です」
+        </div>
+        <div class="bg-box bg-good">
+          <div class="bg-label">✓ GOOD</div>
+          「交通事故でなくなる人の43%は、シートベルトで助かっていた」
+        </div>
+      </div>
+    </div>
+
+    <!-- Concrete -->
+    <div class="card card-c1">
+      <div class="card-header">
+        <div class="card-icon icon-c1">🧱</div>
+        <div class="card-title">
+          <div class="card-letter">C — CONCRETE</div>
+          <div class="card-name">具体性 <span class="en">Concrete</span></div>
+        </div>
+      </div>
+      <p class="card-desc">
+        抽象語は人によって意味が変わる。
+        <strong>五感で想像できる言葉</strong>に置き換えると、
+        誰が聞いても同じ絵が浮かぶ。
+        「早い」ではなく「30分」、「大きい」ではなく「テニスコート2面分」。
+      </p>
+      <div class="card-bad-good">
+        <div class="bg-box bg-bad">
+          <div class="bg-label">✗ BAD</div>
+          「戦略的シナジーを活用し、ソリューションをスケールします」
+        </div>
+        <div class="bg-box bg-good">
+          <div class="bg-label">✓ GOOD</div>
+          「1000曲をポケットに」（iPodのコピー）
+        </div>
+      </div>
+    </div>
+
+    <!-- Credible -->
+    <div class="card card-c2">
+      <div class="card-header">
+        <div class="card-icon icon-c2">🔐</div>
+        <div class="card-title">
+          <div class="card-letter">C — CREDIBLE</div>
+          <div class="card-name">信頼性 <span class="en">Credible</span></div>
+        </div>
+      </div>
+      <p class="card-desc">
+        権威・統計・証拠がなくても信頼は作れる。
+        <strong>「自分で確かめてみてください」</strong>と言えるディテールや、
+        リアルな個人の体験談が、冷たいデータより心に刺さることが多い。
+      </p>
+      <div class="card-bad-good">
+        <div class="bg-box bg-bad">
+          <div class="bg-label">✗ BAD</div>
+          「業界最高水準の品質で、多くのお客様に選ばれています」
+        </div>
+        <div class="bg-box bg-good">
+          <div class="bg-label">✓ GOOD</div>
+          「Subwayのジャレッド：この食事法でサンドイッチだけ食べて100kg痩せた」
+        </div>
+      </div>
+    </div>
+
+    <!-- Emotional -->
+    <div class="card card-e">
+      <div class="card-header">
+        <div class="card-icon icon-e">❤️</div>
+        <div class="card-title">
+          <div class="card-letter">E — EMOTIONAL</div>
+          <div class="card-name">感情に訴える <span class="en">Emotional</span></div>
+        </div>
+      </div>
+      <p class="card-desc">
+        人は「情報」ではなく<strong>「感情」で動く</strong>。
+        統計より一人の人間の話のほうが募金は増える（識別可能な犠牲者効果）。
+        自己利益だけでなく、アイデンティティや仲間への感情にも働きかける。
+      </p>
+      <div class="card-bad-good">
+        <div class="bg-box bg-bad">
+          <div class="bg-label">✗ BAD</div>
+          「毎年300万人の子供が飢餓に苦しんでいます」
+        </div>
+        <div class="bg-box bg-good">
+          <div class="bg-label">✓ GOOD</div>
+          「ロキアは7歳の女の子です。食事は一日一回…あなたの支援が彼女を救います」
+        </div>
+      </div>
+    </div>
+
+    <!-- Stories -->
+    <div class="card card-s2">
+      <div class="card-header">
+        <div class="card-icon icon-s2">📖</div>
+        <div class="card-title">
+          <div class="card-letter">S — STORIES</div>
+          <div class="card-name">物語性 <span class="en">Stories</span></div>
+        </div>
+      </div>
+      <p class="card-desc">
+        ストーリーはシミュレーターだ。聞く人の脳を<strong>追体験</strong>させ、
+        行動を促す。「チャレンジプロット」「つながりプロット」「創造性プロット」の
+        3種類が、聞き手を行動へ動かす力が強い。
+      </p>
+      <div class="card-bad-good">
+        <div class="bg-box bg-bad">
+          <div class="bg-label">✗ BAD</div>
+          「諦めずに続けることが成功の秘訣です（箇条書き5項目）」
+        </div>
+        <div class="bg-box bg-good">
+          <div class="bg-label">✓ GOOD</div>
+          「Jaredは毎朝6時に起き、45分歩いてSubwayへ向かった。それが1年続いた」
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <h2>6原則の本質</h2>
+    <p>
+      SUCCESSは「いいコンテンツ」の話ではなく、<strong>人間の認知の仕組み</strong>に合わせて
+      メッセージを設計する思想だ。<br>
+      呪いの知識（知っている人が知らない人の視点を想像できなくなる現象）を克服し、
+      アイデアが相手の頭の中で<strong>生き続ける</strong>ように設計する。
+    </p>
+    <div class="quote">
+      「知識の呪いを解く唯一の方法は、メッセージを受け取る側の頭で考えることだ」<br>
+      <cite>— Chip Heath &amp; Dan Heath, Made to Stick</cite>
+    </div>
+  </div>
+
+  <footer>
+    Based on "Made to Stick" by Chip Heath &amp; Dan Heath (2007) · Generated with Claude Code
+  </footer>
+
+</body>
+</html>

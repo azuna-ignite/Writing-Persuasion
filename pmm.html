@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMMサーチシート & セルフチェックシート — Writing & Persuasion</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text-primary: #0f0f1a;
+      --text-secondary: #4a4a6a;
+      --text-muted: #8888aa;
+      --bg-page: #f6f6f9;
+      --bg-white: #ffffff;
+      --border: #e4e4f0;
+      --border-light: #f0f0f8;
+      --green: #16a34a;
+      --green-light: #f0fdf4;
+      --green-border: #bbf7d0;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.75;
+    }
+
+    /* ─── Site Nav ─── */
+    .site-nav { background:#fff; border-bottom:1px solid #e4e4f0; position:sticky; top:0; z-index:200; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+    .nav-inner { max-width:1200px; margin:0 auto; padding:0 20px; height:50px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .nav-brand { font-size:.88rem; font-weight:800; color:#0f0f1a; text-decoration:none; white-space:nowrap; }
+    .nav-links { display:flex; gap:2px; flex-wrap:wrap; }
+    .nav-links a { font-size:.76rem; color:#5c5c7a; text-decoration:none; padding:4px 10px; border-radius:6px; font-weight:500; transition:background .15s,color .15s; white-space:nowrap; }
+    .nav-links a:hover { background:#f4f4fa; color:#0f0f1a; }
+    .nav-links a.active { background:#f0fdf4; color:#16a34a; font-weight:700; }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 24px 50px;
+      text-align: center;
+    }
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--green);
+      background: var(--green-light);
+      border: 1px solid var(--green-border);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, #16a34a, #0891b2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc {
+      margin-top: 16px;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.85;
+    }
+    .hero-source {
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .hero-badges {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .hero-badge {
+      font-size: 0.75rem;
+      padding: 5px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    /* ─── Flow Banner ─── */
+    .flow-banner {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .flow-pill {
+      padding: 6px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #fff;
+    }
+    .fp-1 { background: #16a34a; }
+    .fp-2 { background: #0891b2; }
+    .fp-3 { background: #16a34a; }
+    .flow-arrow { color: #c8c8da; font-size: 1rem; }
+
+    /* ─── Content ─── */
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 52px 24px 80px;
+    }
+
+    /* ─── Section heading ─── */
+    .sec-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--border);
+    }
+    .sec-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .sec-icon-green  { background: var(--green-light); }
+    .sec-icon-blue   { background: #eff6ff; }
+    .sec-num   { font-size: 0.62rem; letter-spacing: 3px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .sec-title { font-size: 1.25rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.3px; }
+
+    /* ─── Highlight box ─── */
+    .highlight {
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      font-size: 0.87rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+    .hl-green  { background: var(--green-light); border: 1px solid var(--green-border); }
+    .hl-blue   { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .hl-amber  { background: #fffbeb; border: 1px solid #fde68a; }
+    .hl-title  { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 7px; }
+    .hl-green  .hl-title { color: #15803d; }
+    .hl-blue   .hl-title { color: #1d4ed8; }
+    .hl-amber  .hl-title { color: #92400e; }
+    .highlight strong { color: var(--text-primary); }
+
+    /* ─── Search Sheet Table ─── */
+    .search-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+    }
+    .search-table thead th {
+      background: #f4f4fa;
+      padding: 11px 16px;
+      text-align: left;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .search-table tbody td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+    .search-table tbody tr:last-child td { border-bottom: none; }
+    .search-table tbody tr:hover { background: #fafafa; }
+    .cat-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 5px;
+      background: var(--green-light);
+      color: #15803d;
+      border: 1px solid var(--green-border);
+      white-space: nowrap;
+    }
+    .item-num {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .item-text { color: var(--text-primary); font-weight: 500; }
+    .item-note { font-size: 0.78rem; color: var(--text-secondary); margin-top: 3px; }
+
+    /* ─── BTRNUTSS ─── */
+    .btrnutss-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .btn-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .btn-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); transform: translateY(-2px); }
+    .btn-letter {
+      font-size: 1.8rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .btn-word  { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .btn-check { font-size: 0.76rem; color: var(--text-secondary); line-height: 1.65; }
+
+    /* ─── Checklist ─── */
+    .checklist-section {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .cl-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      background: #f9f9fc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cl-header-num {
+      font-size: 0.65rem;
+      background: var(--green-light);
+      color: #15803d;
+      border: 1px solid var(--green-border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-weight: 700;
+    }
+    .cl-items { padding: 12px 20px 16px; }
+    .cl-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+    .cl-item:last-child { border-bottom: none; }
+    .cl-box {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #c8c8da;
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ─── Summary ─── */
+    .summary-flow {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+    }
+    .sf-title { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; }
+    .sf-steps {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .sf-step {
+      text-align: center;
+    }
+    .sf-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #fff;
+      margin: 0 auto 6px;
+    }
+    .sf-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); line-height: 1.4; max-width: 80px; }
+    .sf-arrow { color: #c8c8da; font-size: 1.2rem; padding: 0 4px; margin-bottom: 18px; }
+
+    .warn-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-top: 20px;
+      font-size: 0.84rem;
+      color: #92400e;
+      line-height: 1.75;
+    }
+    .warn-box strong { color: #78350f; }
+
+    footer {
+      background: var(--bg-white);
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+    footer strong { color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">✍️ Writing &amp; Persuasion</a>
+      <div class="nav-links">
+        <a href="index.html">ホーム</a>
+        <a href="behavioral-economics.html">行動経済学</a>
+        <a href="success.html">SUCCESS</a>
+        <a href="pesona.html">PESONA</a>
+        <a href="pasbecona.html">PASBECONA</a>
+        <a href="pmm.html" class="active">PMM</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-label">📋 Research & Checklist</div>
+    <h1>PMM <span>サーチシート</span><br>&amp; セルフチェックシート</h1>
+    <p class="hero-desc">
+      コピーライティングの品質を担保する2つの実践ツール。
+      書く前のリサーチと書いた後のチェックを仕組み化することで、
+      ミスを防ぎ、ターゲットに刺さるコピーを安定して書けるようになる。
+    </p>
+    <p class="hero-source">📖 出典：『コピーライティング技術大全』</p>
+    <div class="hero-badges">
+      <span class="hero-badge">📝 PMMサーチシート：9カテゴリ・23項目</span>
+      <span class="hero-badge">✅ セルフチェックシート：18項目</span>
+      <span class="hero-badge">🔤 BTRNUTSSフレームワーク</span>
+    </div>
+  </section>
+
+  <!-- Flow Banner -->
+  <div class="flow-banner">
+    <span class="flow-pill fp-1">① コピーを書く前</span>
+    <span class="flow-arrow">→</span>
+    <span style="font-weight:600;color:#5c5c7a;">PMMサーチシートを全項目埋める</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-pill fp-2">② コピーを書く</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-pill fp-3">③ 完成後</span>
+    <span class="flow-arrow">→</span>
+    <span style="font-weight:600;color:#5c5c7a;">セルフチェックシートで確認</span>
+  </div>
+
+  <div class="content">
+
+    <!-- What is PMM -->
+    <div class="highlight hl-green" style="margin-bottom:32px;">
+      <div class="hl-title">🔑 PMMとは</div>
+      <p><strong>PMM（Product Market Matching）</strong>とは、最終的に「<strong>誰が・何をして・どうなった？</strong>」を伝えること。コピーを書く前にこのマッチングを徹底的にリサーチすることで、ターゲットに刺さるメッセージが生まれる。</p>
+    </div>
+
+    <!-- Section 1: Search Sheet -->
+    <div style="margin-bottom:40px;">
+      <div class="sec-head">
+        <div class="sec-icon sec-icon-green">🔍</div>
+        <div>
+          <div class="sec-num">Part 01</div>
+          <div class="sec-title">PMMサーチシート — 9カテゴリ・23項目</div>
+        </div>
+      </div>
+
+      <div class="highlight hl-blue" style="margin-bottom:20px;">
+        <div class="hl-title">📌 使い方</div>
+        <p>コピーを書く<strong>前</strong>に全項目を埋める。空欄があるほどコピーの精度が下がる。特に「⑥問題・理想・痛み」「⑮USP」「㉑ベネフィット」は最重要項目。</p>
+      </div>
+
+      <table class="search-table">
+        <thead>
+          <tr>
+            <th style="width:28px;">#</th>
+            <th style="width:130px;">カテゴリ</th>
+            <th>項目・チェックポイント</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="item-num">①</td>
+            <td><span class="cat-badge">商品名</span></td>
+            <td>
+              <div class="item-text">商品・サービスの名称</div>
+              <div class="item-note">正式名称と通称。ブランド名とプロダクト名の両方を確認する。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">②</td>
+            <td><span class="cat-badge">理想顧客</span></td>
+            <td>
+              <div class="item-text">熱烈なファン顧客 or 理想と思える顧客像</div>
+              <div class="item-note">既存顧客の中で最もロイヤルなのは誰か？どんな人が最も価値を感じているか。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">③</td>
+            <td rowspan="5"><span class="cat-badge">今の顧客</span></td>
+            <td>
+              <div class="item-text">新規客 or 既存客</div>
+              <div class="item-note">新規：信頼構築が最優先。「なぜあなたが？」を説明する必要がある。既存：商品価値の深掘りや追加購入の訴求が中心。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">④</td>
+            <td><div class="item-text">年齢層</div></td>
+          </tr>
+          <tr>
+            <td class="item-num">⑤</td>
+            <td><div class="item-text">性別</div></td>
+          </tr>
+          <tr>
+            <td class="item-num">⑥</td>
+            <td>
+              <div class="item-text">問題・理想・痛み ⭐ 最重要</div>
+              <div class="item-note">顧客が感じている具体的な悩み・不満・恐怖。「理想の状態」と「現状のギャップ」を言語化する。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑦</td>
+            <td>
+              <div class="item-text">現状維持バイアスの強弱</div>
+              <div class="item-note">「今のままでいい」という心理的抵抗。強いほど訴求（問題提起・緊急性）を強める必要がある。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑧</td>
+            <td rowspan="6"><span class="cat-badge">オファー</span></td>
+            <td><div class="item-text">価格</div></td>
+          </tr>
+          <tr>
+            <td class="item-num">⑨</td>
+            <td><div class="item-text">特典（ボーナス）</div></td>
+          </tr>
+          <tr>
+            <td class="item-num">⑩</td>
+            <td>
+              <div class="item-text">保証（リスクリバーサル）</div>
+              <div class="item-note">返金保証・満足保証など。顧客が感じるリスクを取り除く。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑪</td>
+            <td>
+              <div class="item-text">限定（条件）</div>
+              <div class="item-note">数量限定・対象者限定・条件付き限定など。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑫</td>
+            <td>
+              <div class="item-text">締切（デッドライン）</div>
+              <div class="item-note">期限がないと先延ばしされる。具体的な日時を設定する。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑬</td>
+            <td>
+              <div class="item-text">CTA（Call To Action）</div>
+              <div class="item-note">最終的にどんな行動をとってほしいか。一つに絞る。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑭</td>
+            <td rowspan="2"><span class="cat-badge">ポジション</span></td>
+            <td>
+              <div class="item-text">顧客の声（社会的証明）</div>
+              <div class="item-note">具体的なビフォーアフター、数字入りの体験談が最も効果的。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑮</td>
+            <td>
+              <div class="item-text">USP（Unique Selling Proposition）⭐ 最重要</div>
+              <div class="item-note">競合と差別化できる唯一の強み。「〇〇だけが〇〇できる」という形で1文で表現できるか？</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑯</td>
+            <td rowspan="5"><span class="cat-badge">商品内容</span></td>
+            <td>
+              <div class="item-text">フロントエンド or バックエンド</div>
+              <div class="item-note">フロントエンド：集客商品（低価格・無料）。バックエンド：本命商品（高単価）。訴求の深さが変わる。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑰</td>
+            <td><div class="item-text">ズバリどんな商品・サービスか（一言で）</div></td>
+          </tr>
+          <tr>
+            <td class="item-num">⑱</td>
+            <td><div class="item-text">内容・使い方</div></td>
+          </tr>
+          <tr>
+            <td class="item-num">⑲</td>
+            <td>
+              <div class="item-text">提供者の権威・実績</div>
+              <div class="item-note">なぜあなたが提供するのか。経歴・実績・資格など信頼性の根拠。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">⑳</td>
+            <td>
+              <div class="item-text">機能する証拠・根拠</div>
+              <div class="item-note">データ・研究・実験・実績数字など。「なぜ効くのか」の説明。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">㉑</td>
+            <td><span class="cat-badge">ベネフィット</span></td>
+            <td>
+              <div class="item-text">大きなベネフィットを3つ ⭐ 最重要</div>
+              <div class="item-note">機能（Feature）ではなく変化後の感情・状態（Benefit）で書く。「〇〇できる」ではなく「〇〇になれる」。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">㉒</td>
+            <td><span class="cat-badge">ためらい</span></td>
+            <td>
+              <div class="item-text">先入観・迷い・疑い</div>
+              <div class="item-note">顧客が購入を躊躇する理由を先回りして潰す。「でも〇〇じゃないの？」という声を想定する。</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="item-num">㉓</td>
+            <td><span class="cat-badge">まとめ</span></td>
+            <td>
+              <div class="item-text">「誰が・何をして・どうなった？」をシンプルに一言で</div>
+              <div class="item-note">全項目を埋めた後、この一文に圧縮できるかチェック。これがコピーの核心になる。</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 2: BTRNUTSS -->
+    <div style="margin-bottom:40px;">
+      <div class="sec-head">
+        <div class="sec-icon sec-icon-blue">🔤</div>
+        <div>
+          <div class="sec-num">Part 02</div>
+          <div class="sec-title">BTRNUTSSフレームワーク — ヘッドラインの8要素</div>
+        </div>
+      </div>
+
+      <div class="highlight hl-blue" style="margin-bottom:20px;">
+        <div class="hl-title">📌 使い方</div>
+        <p>セルフチェックシートの「ヘッドライン」評価に使うフレームワーク。<strong>8要素のうち3〜4つ以上</strong>を満たすヘッドラインが理想。全部満たそうとすると長くなりすぎるので注意。</p>
+      </div>
+
+      <div class="btrnutss-grid">
+        <div class="btn-card">
+          <div class="btn-letter" style="color:#1d4ed8;">B</div>
+          <div class="btn-word">Benefit（ベネフィット）</div>
+          <p class="btn-check">読み手にとって有益か。「あなたにとって何がいいのか」が伝わるか。</p>
+        </div>
+        <div class="btn-card">
+          <div class="btn-letter" style="color:#16a34a;">T</div>
+          <div class="btn-word">Trust（信頼性）</div>
+          <p class="btn-check">信頼性はあるか。根拠・数字・権威・固有名詞が入っているか。</p>
+        </div>
+        <div class="btn-card">
+          <div class="btn-letter" style="color:#dc2626;">R</div>
+          <div class="btn-word">Relevance（緊急性）</div>
+          <p class="btn-check">今すぐ読む理由はあるか。「今」「急いで」「期限」などの緊急性が感じられるか。</p>
+        </div>
+        <div class="btn-card">
+          <div class="btn-letter" style="color:#d97706;">N</div>
+          <div class="btn-word">Number（数字）</div>
+          <p class="btn-check">具体的な数字が入っているか。「3つの方法」「7日間で」「98%が」など。</p>
+        </div>
+        <div class="btn-card">
+          <div class="btn-letter" style="color:#7c3aed;">U</div>
+          <div class="btn-word">Uniqueness（独自性）</div>
+          <p class="btn-check">競合と差別化できる独自性や優位性は表現されているか。</p>
+        </div>
+        <div class="btn-card">
+          <div class="btn-letter" style="color:#0891b2;">T</div>
+          <div class="btn-word">Trend（話題性）</div>
+          <p class="btn-check">今旬のキーワード・話題が含まれているか。時事性・トレンドとの連動。</p>
+        </div>
+        <div class="btn-card">
+          <div class="btn-letter" style="color:#ec4899;">S</div>
+          <div class="btn-word">Surprise（意外性）</div>
+          <p class="btn-check">読者の予想を裏切る意外性はあるか。「えっ？」と思わせられるか。</p>
+        </div>
+        <div class="btn-card">
+          <div class="btn-letter" style="color:#f43f5e;">S</div>
+          <div class="btn-word">Story（物語性）</div>
+          <p class="btn-check">ストーリーが感じられるか。「誰が・どんな状況で・どうなった」の匂いがあるか。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Self Check -->
+    <div style="margin-bottom:40px;">
+      <div class="sec-head">
+        <div class="sec-icon sec-icon-green">✅</div>
+        <div>
+          <div class="sec-num">Part 03</div>
+          <div class="sec-title">PMMセルフチェックシート — 18項目</div>
+        </div>
+      </div>
+
+      <div class="highlight hl-blue" style="margin-bottom:20px;">
+        <div class="hl-title">📌 使い方</div>
+        <p>コピーが<strong>完成した後</strong>に使うチェックリスト。すべての□にチェックが入るまでコピーを見直す。特に「ターゲットの混在」と「CTAのタイミング」は見落としやすいので注意。</p>
+      </div>
+
+      <!-- Check 1 -->
+      <div class="checklist-section">
+        <div class="cl-header">
+          <span>1. ターゲット</span>
+          <span class="cl-header-num">2項目</span>
+        </div>
+        <div class="cl-items">
+          <div class="cl-item"><div class="cl-box"></div><span>新規客向け or 既存客向けか明確か</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>現状維持バイアスの強弱を把握しているか</span></div>
+        </div>
+      </div>
+
+      <!-- Check 2 -->
+      <div class="checklist-section">
+        <div class="cl-header">
+          <span>2. ヘッドライン（BTRNUTSSで評価）</span>
+          <span class="cl-header-num">1項目</span>
+        </div>
+        <div class="cl-items">
+          <div class="cl-item"><div class="cl-box"></div><span>BTRNUTSSの8要素のうち3つ以上を満たしているか（B・T・R・N・U・T・S・S）</span></div>
+        </div>
+      </div>
+
+      <!-- Check 3-18 -->
+      <div class="checklist-section">
+        <div class="cl-header">
+          <span>3〜18. コピー全体</span>
+          <span class="cl-header-num">15項目</span>
+        </div>
+        <div class="cl-items">
+          <div class="cl-item"><div class="cl-box"></div><span>オープニングに違和感はないか（最初の3行で読み続けさせられるか）</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>誰に向けたメッセージか明確か</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>顧客の痛みを捉えているか</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>商品・サービスがどんなものか明確に分かるか</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>ベネフィットは明確か（機能ではなく変化後の状態で書けているか）</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>オファーは魅力的か（価格・特典・保証・限定・締切）</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>商品・サービスが機能する根拠はあるか（データ・証言・実績）</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>希少性・限定性はあるか</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>リスクリバーサル（保証）はあるか</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>締切はあるか</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>価格など販売条件はすべてカバーしているか</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>CTAは明確か（行動は一つに絞られているか）</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>CTAを見せるタイミングは的確か（早すぎないか・遅すぎないか）</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>レター全体のアイデアは明確で興味深いか</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>上から下への流れはスムーズか（読み進めるのに違和感がないか）</span></div>
+          <div class="cl-item"><div class="cl-box"></div><span>⭐ ターゲットが混在していないか（新規客向けと既存客向けが混ざっていないか）</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Flow -->
+    <div class="summary-flow">
+      <div class="sf-title">使い方の流れ</div>
+      <div class="sf-steps">
+        <div class="sf-step">
+          <div class="sf-num" style="background:#16a34a;">1</div>
+          <div class="sf-label">PMMサーチシートを全項目埋める</div>
+        </div>
+        <span class="sf-arrow">→</span>
+        <div class="sf-step">
+          <div class="sf-num" style="background:#0891b2;">2</div>
+          <div class="sf-label">コピーを書く</div>
+        </div>
+        <span class="sf-arrow">→</span>
+        <div class="sf-step">
+          <div class="sf-num" style="background:#16a34a;">3</div>
+          <div class="sf-label">BTRNUTSSでヘッドラインを評価</div>
+        </div>
+        <span class="sf-arrow">→</span>
+        <div class="sf-step">
+          <div class="sf-num" style="background:#16a34a;">4</div>
+          <div class="sf-label">セルフチェック18項目を確認</div>
+        </div>
+        <span class="sf-arrow">→</span>
+        <div class="sf-step">
+          <div class="sf-num" style="background:#d97706;">5</div>
+          <div class="sf-label">全□にチェックが入るまで修正</div>
+        </div>
+      </div>
+
+      <div class="warn-box">
+        ⚠️ <strong>よくある3つの失敗</strong><br>
+        ① <strong>ターゲットの混在</strong>：新規客向けと既存客向けが途中で混ざってしまう<br>
+        ② <strong>CTAのタイミングミス</strong>：信頼を築く前に売り込みすぎ、または遅すぎて機会を逃す<br>
+        ③ <strong>機能 vs ベネフィットの混同</strong>：「〇〇できる（機能）」ではなく「〇〇になれる（変化）」で書く
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <strong>Writing &amp; Persuasion Knowledge Base</strong> — PMMサーチシート &amp; セルフチェックシート
+  </footer>
+
+</body>
+</html>
