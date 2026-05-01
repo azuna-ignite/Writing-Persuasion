@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>理解度クイズ — Writing & Persuasion</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text-primary: #0f0f1a;
+      --text-secondary: #4a4a6a;
+      --text-muted: #8888aa;
+      --bg-page: #f6f6f9;
+      --bg-white: #ffffff;
+      --border: #e4e4f0;
+      --border-light: #f0f0f8;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    /* ─── Nav ─── */
+    .site-nav { background:#fff; border-bottom:1px solid #e4e4f0; position:sticky; top:0; z-index:200; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+    .nav-inner { max-width:1200px; margin:0 auto; padding:0 20px; height:50px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .nav-brand { font-size:.88rem; font-weight:800; color:#0f0f1a; text-decoration:none; white-space:nowrap; }
+    .nav-links { display:flex; gap:2px; flex-wrap:wrap; }
+    .nav-links a { font-size:.76rem; color:#5c5c7a; text-decoration:none; padding:4px 10px; border-radius:6px; font-weight:500; transition:background .15s,color .15s; white-space:nowrap; }
+    .nav-links a:hover { background:#f4f4fa; color:#0f0f1a; }
+    .nav-links a.active { background:#fdf2f8; color:#be185d; font-weight:700; }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 24px 48px;
+      text-align: center;
+    }
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #be185d;
+      background: #fdf2f8;
+      border: 1px solid #fbcfe8;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; letter-spacing: -0.5px; color: var(--text-primary); line-height: 1.2; }
+    .hero h1 span { background: linear-gradient(90deg,#be185d,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hero-desc { margin-top: 14px; font-size: 0.95rem; color: var(--text-secondary); max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.8; }
+    .hero-meta { display:flex; justify-content:center; gap:16px; margin-top:22px; flex-wrap:wrap; }
+    .hero-meta-item { font-size:0.76rem; padding:5px 14px; border-radius:8px; font-weight:600; background:var(--bg-page); border:1px solid var(--border); color:var(--text-secondary); }
+
+    /* ─── Quiz Shell ─── */
+    #quiz-shell {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 44px 24px 80px;
+    }
+
+    /* ─── Start Screen ─── */
+    #start-screen {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px;
+      text-align: center;
+    }
+    #start-screen h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+    #start-screen p  { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 24px; }
+
+    .topic-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+    .topic-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-page);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .topic-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .btn-start {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 32px;
+      background: linear-gradient(135deg, #be185d, #7c3aed);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity .18s, transform .18s;
+    }
+    .btn-start:hover { opacity: .9; transform: translateY(-2px); }
+
+    /* ─── Progress ─── */
+    .progress-wrap {
+      margin-bottom: 24px;
+    }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .progress-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #be185d, #7c3aed);
+      transition: width .4s ease;
+    }
+
+    /* ─── Question Card ─── */
+    #question-area { display: none; }
+
+    .q-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .q-card-head {
+      padding: 14px 22px 12px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .q-category-badge {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .q-num { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-left: auto; }
+
+    .q-card-body { padding: 22px 22px 8px; }
+    .q-text { font-size: 1rem; font-weight: 600; color: var(--text-primary); line-height: 1.6; margin-bottom: 20px; }
+
+    /* ─── Choices ─── */
+    .choices { display: flex; flex-direction: column; gap: 10px; padding: 0 22px 22px; }
+    .choice-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--bg-page);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.87rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-align: left;
+      transition: border-color .15s, background .15s, color .15s;
+      line-height: 1.5;
+    }
+    .choice-btn:hover:not(:disabled) { border-color: #c8c8e0; background: #f4f4fa; color: var(--text-primary); }
+    .choice-label {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--bg-white);
+      border: 1.5px solid #c8c8da;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: background .15s, border-color .15s, color .15s;
+      color: var(--text-muted);
+    }
+    .choice-btn:hover:not(:disabled) .choice-label { border-color: #6666aa; color: #6666aa; }
+
+    /* States */
+    .choice-btn.correct {
+      background: #f0fdf4;
+      border-color: #16a34a;
+      color: #15803d;
+    }
+    .choice-btn.correct .choice-label { background: #16a34a; border-color: #16a34a; color: #fff; }
+
+    .choice-btn.wrong {
+      background: #fff1f2;
+      border-color: #dc2626;
+      color: #b91c1c;
+    }
+    .choice-btn.wrong .choice-label { background: #dc2626; border-color: #dc2626; color: #fff; }
+
+    .choice-btn.reveal-correct {
+      background: #f0fdf4;
+      border-color: #16a34a;
+      color: #15803d;
+      opacity: .7;
+    }
+    .choice-btn.reveal-correct .choice-label { background: #16a34a; border-color: #16a34a; color: #fff; }
+
+    .choice-btn:disabled { cursor: default; }
+
+    /* ─── Feedback ─── */
+    .feedback {
+      margin: 0 22px 20px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      line-height: 1.75;
+      display: none;
+    }
+    .feedback.correct { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+    .feedback.wrong   { background: #fff1f2; border: 1px solid #fecdd3; color: #b91c1c; }
+    .feedback-icon  { font-size: 1.1rem; margin-right: 4px; }
+    .feedback-title { font-weight: 700; margin-bottom: 4px; }
+    .feedback-exp   { color: #3a3a5a; font-size: 0.82rem; margin-top: 6px; line-height: 1.7; }
+
+    /* ─── Next Button ─── */
+    .next-wrap { padding: 0 22px 22px; display: none; }
+    .btn-next {
+      width: 100%;
+      padding: 12px;
+      background: var(--text-primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-next:hover { background: #2a2a4a; }
+
+    /* ─── Result Screen ─── */
+    #result-screen { display: none; }
+
+    .result-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      text-align: center;
+    }
+    .result-header { padding: 40px 28px 28px; }
+    .result-emoji  { font-size: 3.5rem; margin-bottom: 16px; display: block; }
+    .result-score  { font-size: 3rem; font-weight: 900; color: var(--text-primary); line-height: 1; margin-bottom: 6px; }
+    .result-score span { font-size: 1.2rem; font-weight: 500; color: var(--text-muted); }
+    .result-grade  { font-size: 1.1rem; font-weight: 700; margin-top: 10px; margin-bottom: 6px; }
+    .result-comment { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.75; max-width: 420px; margin: 0 auto; }
+
+    .result-bar-section { padding: 20px 28px; border-top: 1px solid var(--border-light); }
+    .result-bar-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+
+    .topic-result-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .tr-label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); width: 140px; text-align: left; flex-shrink: 0; }
+    .tr-bar-track { flex: 1; height: 8px; background: var(--border); border-radius: 8px; overflow: hidden; }
+    .tr-bar-fill  { height: 100%; border-radius: 8px; transition: width .6s ease; }
+    .tr-score { font-size: 0.76rem; font-weight: 700; color: var(--text-muted); width: 36px; text-align: right; flex-shrink: 0; }
+
+    .result-actions {
+      padding: 20px 28px 28px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      border-top: 1px solid var(--border-light);
+      flex-wrap: wrap;
+    }
+    .btn-retry {
+      padding: 11px 24px;
+      background: linear-gradient(135deg,#be185d,#7c3aed);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn-retry:hover { opacity: .9; }
+    .btn-back {
+      padding: 11px 24px;
+      background: var(--bg-page);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .btn-back:hover { background: #eeeef8; }
+
+    footer {
+      background: var(--bg-white);
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">✍️ Writing &amp; Persuasion</a>
+      <div class="nav-links">
+        <a href="index.html">ホーム</a>
+        <a href="behavioral-economics.html">行動経済学</a>
+        <a href="success.html">SUCCESS</a>
+        <a href="pesona.html">PESONA</a>
+        <a href="pasbecona.html">PASBECONA</a>
+        <a href="pmm.html">PMM</a>
+        <a href="quiz.html" class="active">クイズ</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-label">🎯 Quiz</div>
+    <h1>理解度<span>クイズ</span></h1>
+    <p class="hero-desc">
+      行動経済学・SUCCESS・PESONA・PASBECONA・PMMの知識を問う全20問。
+      各問題には解説付き。満点を目指して挑戦しよう。
+    </p>
+    <div class="hero-meta">
+      <span class="hero-meta-item">📝 全20問</span>
+      <span class="hero-meta-item">🗂 5カテゴリ</span>
+      <span class="hero-meta-item">💬 全問解説付き</span>
+    </div>
+  </section>
+
+  <!-- Quiz -->
+  <div id="quiz-shell">
+
+    <!-- Start -->
+    <div id="start-screen">
+      <h2>クイズを始める前に</h2>
+      <p>各ページの内容から出題されます。わからなくても解説で確認できるので、<br>気軽にチャレンジしてください！</p>
+      <div class="topic-list">
+        <div class="topic-item"><div class="topic-dot" style="background:#1d4ed8;"></div>行動経済学（8問）</div>
+        <div class="topic-item"><div class="topic-dot" style="background:#7c3aed;"></div>SUCCESSの法則（3問）</div>
+        <div class="topic-item"><div class="topic-dot" style="background:#d97706;"></div>PESONAの法則（3問）</div>
+        <div class="topic-item"><div class="topic-dot" style="background:#dc2626;"></div>PASBECONAの法則（3問）</div>
+        <div class="topic-item"><div class="topic-dot" style="background:#16a34a;"></div>PMMシート（3問）</div>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">▶ クイズを開始する</button>
+    </div>
+
+    <!-- Question Area -->
+    <div id="question-area">
+      <!-- Progress -->
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="q-counter">問題 1 / 20</span>
+          <span id="q-score-live">正解 0問</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Card -->
+      <div class="q-card">
+        <div class="q-card-head">
+          <span class="q-category-badge" id="q-cat-badge"></span>
+          <span class="q-num" id="q-num-label"></span>
+        </div>
+        <div class="q-card-body">
+          <div class="q-text" id="q-text"></div>
+        </div>
+        <div class="choices" id="choices"></div>
+        <div class="feedback" id="feedback">
+          <div class="feedback-title" id="feedback-title"></div>
+          <div class="feedback-exp" id="feedback-exp"></div>
+        </div>
+        <div class="next-wrap" id="next-wrap">
+          <button class="btn-next" id="btn-next" onclick="nextQuestion()">次の問題へ →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="result-screen">
+      <div class="result-card">
+        <div class="result-header">
+          <span class="result-emoji" id="r-emoji"></span>
+          <div class="result-score" id="r-score"></div>
+          <div class="result-grade" id="r-grade"></div>
+          <div class="result-comment" id="r-comment"></div>
+        </div>
+        <div class="result-bar-section">
+          <div class="result-bar-title">カテゴリ別スコア</div>
+          <div id="topic-results"></div>
+        </div>
+        <div class="result-actions">
+          <button class="btn-retry" onclick="retryQuiz()">🔄 もう一度挑戦する</button>
+          <a class="btn-back" href="index.html">← ホームへ</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <strong>Writing &amp; Persuasion Knowledge Base</strong> — 理解度クイズ
+  </footer>
+
+  <script>
+  const CATEGORIES = {
+    be:  { label: '行動経済学',    color: '#1d4ed8', bg: '#eff6ff',  border: '#bfdbfe' },
+    suc: { label: 'SUCCESSの法則', color: '#7c3aed', bg: '#f5f3ff',  border: '#ddd6fe' },
+    pes: { label: 'PESONAの法則',  color: '#d97706', bg: '#fffbeb',  border: '#fde68a' },
+    pas: { label: 'PASBECONA',     color: '#dc2626', bg: '#fff1f2',  border: '#fecdd3' },
+    pmm: { label: 'PMMシート',     color: '#16a34a', bg: '#f0fdf4',  border: '#bbf7d0' },
+  };
+
+  const ALL_QUESTIONS = [
+    // ── 行動経済学 ──
+    {
+      cat: 'be',
+      q: 'プロスペクト理論において、損失から受ける痛みは、同額の利益の喜びの何倍程度と言われているか？',
+      choices: ['約0.5倍（利益の方が大きい）', '約1倍（ほぼ同じ）', '約2〜2.5倍', '約5倍以上'],
+      correct: 2,
+      exp: 'カーネマンとトヴェルスキーの研究により、損失の痛みは同額の利益の喜びの約2〜2.5倍大きいことが示されました。これを「損失回避性（Loss Aversion）」と呼びます。'
+    },
+    {
+      cat: 'be',
+      q: 'ダニエル・カーネマンが提唱した「システム1」の特徴として正しいものはどれか？',
+      choices: ['意識的・論理的・時間がかかる', '自動的・直感的・ほぼ無意識', '複雑な計算を得意とする', '疲れにくく安定している'],
+      correct: 1,
+      exp: 'システム1は自動的・直感的・無意識に動く思考システムです。ほぼエネルギーゼロで高速処理しますが、認知バイアスの温床になりやすいのもシステム1です。'
+    },
+    {
+      cat: 'be',
+      q: '「ナッジ理論（Nudge Theory）」を2008年に著書で広めた人物は誰か？',
+      choices: ['ダニエル・カーネマン', 'エイモス・トヴェルスキー', 'リチャード・セイラー', 'ロバート・シラー'],
+      correct: 2,
+      exp: 'リチャード・セイラーはキャス・サンスティーンと共著で「Nudge」（2008年）を出版。ナッジ理論を広め、2017年にノーベル経済学賞を受賞しました。'
+    },
+    {
+      cat: 'be',
+      q: '「今すぐ1,000円」と「1週間後に1,100円」を比べると多くの人が前者を選ぶが、「1年後の1,000円」と「1年と1週後の1,100円」では後者を選ぶ傾向がある。この矛盾した選好を説明する概念はどれか？',
+      choices: ['損失回避性', '現在バイアス（双曲割引）', 'アンカリング効果', '確実性効果'],
+      correct: 1,
+      exp: '現在バイアス（双曲割引）とは、近い将来の選択は急激に割り引いて評価するが、遠い将来の選択は穏やかに評価する傾向です。そのため時間軸によって選好が逆転します。'
+    },
+    {
+      cat: 'be',
+      q: '最初に提示された数字が、その後の判断の基準点になって調整が不十分になる認知バイアスを何というか？',
+      choices: ['確証バイアス', 'アンカリング効果', '後知恵バイアス', '保有効果'],
+      correct: 1,
+      exp: 'アンカリング効果とは、最初に見た数字（アンカー）が判断の基準点となり、そこからの調整が不十分になる現象です。価格交渉や見積もりの場面で強く作用します。'
+    },
+    {
+      cat: 'be',
+      q: '一度自分のものになった物の価値を、持っていないときより高く評価する傾向を何というか？',
+      choices: ['損失回避性', '現状維持バイアス', '保有効果（Endowment Effect）', 'サンクコスト効果'],
+      correct: 2,
+      exp: '保有効果とは、一度所有したものを手放す際に実際の価値より高く評価する傾向です。損失回避性と密接に関連しており、「無料トライアル」が解約されにくい理由の一つです。'
+    },
+    {
+      cat: 'be',
+      q: '回収不能なコスト（お金・時間・労力）に引きずられて合理的でない選択を続けてしまう傾向を何というか？',
+      choices: ['現在バイアス', 'フレーミング効果', 'サンクコスト効果（埋没費用効果）', 'バンドワゴン効果'],
+      correct: 2,
+      exp: 'サンクコスト効果とは、すでに回収できないコストに引きずられて判断を誤る傾向です。「ここまでお金をかけたのだから」と損切りできない投資家や、「3年続けたプロジェクト」を止められない経営者が典型例です。'
+    },
+    {
+      cat: 'be',
+      q: 'ナッジ理論における「デフォルト設定」の説明として正しいものはどれか？',
+      choices: ['価格を下げて選択を促すこと', '禁止や罰則で行動を制限すること', '初期設定を望ましい選択肢にするだけで行動を変えること', '正しい選択肢だけを残すこと'],
+      correct: 2,
+      exp: 'デフォルト設定とは、人々が初期状態（デフォルト）をそのまま選びやすい「現状維持バイアス」を利用したナッジです。臓器提供のオプトアウト化が有名な事例で、スペインでは提供率80%超を達成しました。'
+    },
+
+    // ── SUCCESSの法則 ──
+    {
+      cat: 'suc',
+      q: 'SUCCESSの法則（Made to Stick）において「U」が表す原則はどれか？',
+      choices: ['Useful（役立つ）', 'Unexpected（意外性）', 'Unique（独自性）', 'Urgent（緊急性）'],
+      correct: 1,
+      exp: 'UはUnexpected（意外性）です。人は予測を破られたとき注意を向けます。ギャップを意図的に作り「なぜ？」という好奇心を引き出すことで、メッセージへの注目を高めます。'
+    },
+    {
+      cat: 'suc',
+      q: '「1000曲をポケットに」（iPodのキャッチコピー）は、SUCCESSの法則のどの原則の典型例か？',
+      choices: ['Simple（シンプル）', 'Unexpected（意外性）', 'Concrete（具体性）', 'Emotional（感情）'],
+      correct: 2,
+      exp: 'Concrete（具体性）の典型例です。「大容量のMP3プレイヤー」という抽象的な表現ではなく、「1000曲」という五感でイメージできる数字を使うことで、誰が聞いても同じ絵が浮かびます。'
+    },
+    {
+      cat: 'suc',
+      q: 'SUCCESSの法則で「統計より一人の人間の話の方が募金額が増える」という現象を説明する原則はどれか？',
+      choices: ['Credible（信頼性）', 'Concrete（具体性）', 'Emotional（感情に訴える）', 'Stories（物語性）'],
+      correct: 2,
+      exp: 'Emotional（感情に訴える）の原則です。「毎年300万人が飢餓に苦しむ」という統計より、「ロキアは7歳の女の子です…」という個人の話の方が感情が動き、行動（寄付）につながります。これを「識別可能な犠牲者効果」と呼びます。'
+    },
+
+    // ── PESONAの法則 ──
+    {
+      cat: 'pes',
+      q: 'PESONAの法則の正しいステップ順はどれか？',
+      choices: [
+        'Problem → Emotion → Solution → Offer → Narrow → Action',
+        'Problem → Empathy → Solution → Offer → Narrow Down → Action',
+        'Problem → Evidence → Story → Offer → Need → Action',
+        'Proof → Empathy → Solution → Offer → Narrow → Action'
+      ],
+      correct: 1,
+      exp: 'PESONAは Problem（問題提起）→ Empathy（共感）→ Solution（解決策）→ Offer（提案）→ Narrow Down（絞り込み）→ Action（行動）の6ステップです。神田昌典が提唱した日本発のコピーライティングフレームワークです。'
+    },
+    {
+      cat: 'pes',
+      q: 'PESONAにおいて「N（Narrow Down / 絞り込み）」の目的として最も正しいのはどれか？',
+      choices: [
+        'ターゲットを排除して人数を減らすこと',
+        '希少性と緊急性を生み出し、先延ばしを防ぐこと',
+        '商品の欠点を正直に伝えること',
+        '価格を下げてハードルを下げること'
+      ],
+      correct: 1,
+      exp: 'Narrow Down（絞り込み）は、対象者・期限・数量を絞ることで希少性と緊急性を生み出すステップです。「誰でもどうぞ」より「この人向け」の方がターゲットに刺さり、「向かない人」を正直に書くことで信頼感も増します。'
+    },
+    {
+      cat: 'pes',
+      q: 'PESONAにおいて「E（Empathy / 共感）」の段階でやってはいけないことはどれか？',
+      choices: [
+        '自分の失敗談を語る',
+        '読者の感情に名前をつける',
+        '読者の問題を批判・否定する',
+        '「あなたの気持ちはわかる」と伝える'
+      ],
+      correct: 2,
+      exp: 'Empathy（共感）のステップでは批判・否定は禁物です。このフェーズの目的は「売り込みの前に信頼関係を築くこと」。共感なく売り込みに入ると、読者は心の扉を閉めてしまいます。'
+    },
+
+    // ── PASBECONA ──
+    {
+      cat: 'pas',
+      q: 'PASBECONAはPESONAに3つの要素を追加したものだが、その3つの正しい組み合わせはどれか？',
+      choices: [
+        'Brand・Effect・Cost',
+        'Benefit・Evidence・Contents',
+        'Background・Emotion・Context',
+        'Build・Engage・Convert'
+      ],
+      correct: 1,
+      exp: 'PASBECONAはPESONAのSolution（解決策）の後に、Benefit（ベネフィット）・Evidence（証拠）・Contents（商品の中身）の3ステップを追加したものです。この3要素により論理的な説得力が大幅に強化されます。'
+    },
+    {
+      cat: 'pas',
+      q: 'PASBECONAの「E（Evidence / 証拠）」ステップの目的として最も正しいのはどれか？',
+      choices: [
+        'ベネフィットを提示した後の「本当に？」という疑念を証拠で打ち消す',
+        '感情に訴えかけて購買意欲を高める',
+        '商品の詳細な機能を説明する',
+        'ターゲットを絞り込んで希少性を出す'
+      ],
+      correct: 0,
+      exp: 'Evidenceは「ベネフィットを提示した後の疑念を証拠で打ち消す」ステップです。顧客の声・実績数字・第三者機関の認証・メディア掲載などを使い、「言っていること」から「証明されていること」に変換します。'
+    },
+    {
+      cat: 'pas',
+      q: 'PASBECONAで「商品の中身・詳細」を説明するのが、B・E・Cの後になる理由はどれか？',
+      choices: [
+        '文字数を増やしてSEO効果を高めるため',
+        '信頼を積み上げてから詳細を見せる順番を確立するため',
+        '法律上、最後に記載する義務があるため',
+        '読者が疲れた頃に詳細を見せる方が効果的なため'
+      ],
+      correct: 1,
+      exp: 'PASBECONAでContents（商品の中身）をB・E・Cの後に置く理由は「信頼を得てから詳細を見せる」順番のためです。ベネフィットで欲求を高め（B）、証拠で信頼を積んで（E）から商品の詳細を見せると（C）、読者は「だからあの効果が出るんだ」と納得しやすくなります。'
+    },
+
+    // ── PMM ──
+    {
+      cat: 'pmm',
+      q: 'PMMとは何の略か？',
+      choices: [
+        'Product Marketing Method',
+        'Product Market Matching',
+        'Persuasion Message Mapping',
+        'Prospect Mind Modeling'
+      ],
+      correct: 1,
+      exp: 'PMMはProduct Market Matching（プロダクト・マーケット・マッチング）の略です。最終的に「誰が・何をして・どうなった？」を伝えることを目指し、コピーを書く前にこのマッチングを徹底的にリサーチします。'
+    },
+    {
+      cat: 'pmm',
+      q: 'BTRNUTSSフレームワークの「R」が意味するものはどれか？',
+      choices: [
+        'Readability（読みやすさ）',
+        'Relevance（緊急性・関連性）',
+        'Reliability（信頼性）',
+        'Reach（到達範囲）'
+      ],
+      correct: 1,
+      exp: 'BTRNUTSSのRはRelevance（緊急性・関連性）です。「今すぐ読む理由があるか」「今この瞬間に関係があるか」を問います。「今なら」「期限」「あなたの状況に合わせて」などの表現で緊急性を出します。'
+    },
+    {
+      cat: 'pmm',
+      q: 'PMMセルフチェックシートで「最もよくある失敗」として挙げられているものはどれか？',
+      choices: [
+        'ヘッドラインが長すぎる',
+        '価格の記載を忘れる',
+        'ターゲット（新規客・既存客）が途中で混在してしまう',
+        'ベネフィットを3つ以上書きすぎる'
+      ],
+      correct: 2,
+      exp: 'PMMセルフチェックシートの「よくある失敗」の一つが「ターゲットの混在」です。新規客向けのコピー（信頼構築が必要）と既存客向けのコピー（価値の深掘り）が混ざると、どちらにも刺さらなくなります。'
+    },
+  ];
+
+  // ─── State ───
+  let questions = [];
+  let current = 0;
+  let score = 0;
+  let answered = false;
+  let topicScores = {};
+
+  function shuffle(arr) {
+    return [...arr].sort(() => Math.random() - 0.5);
+  }
+
+  function startQuiz() {
+    questions = shuffle(ALL_QUESTIONS);
+    current = 0;
+    score = 0;
+    answered = false;
+    topicScores = {};
+    Object.keys(CATEGORIES).forEach(k => { topicScores[k] = { correct: 0, total: 0 }; });
+    questions.forEach(q => { topicScores[q.cat].total++; });
+
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'none';
+    document.getElementById('question-area').style.display = 'block';
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q = questions[current];
+    const cat = CATEGORIES[q.cat];
+    answered = false;
+
+    // progress
+    const pct = (current / questions.length) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('q-counter').textContent = `問題 ${current + 1} / ${questions.length}`;
+    document.getElementById('q-score-live').textContent = `正解 ${score}問`;
+
+    // badge
+    const badge = document.getElementById('q-cat-badge');
+    badge.textContent = cat.label;
+    badge.style.cssText = `background:${cat.bg};color:${cat.color};border:1px solid ${cat.border};`;
+
+    document.getElementById('q-num-label').textContent = `Q${current + 1}`;
+    document.getElementById('q-text').textContent = q.q;
+
+    // choices (shuffle order)
+    const idxs = shuffle([0,1,2,3]);
+    const choicesEl = document.getElementById('choices');
+    choicesEl.innerHTML = '';
+    idxs.forEach(i => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.dataset.idx = i;
+      btn.innerHTML = `<span class="choice-label">${'ABCD'[idxs.indexOf(i)]}</span><span>${q.choices[i]}</span>`;
+      btn.onclick = () => selectAnswer(i, btn);
+      choicesEl.appendChild(btn);
+    });
+
+    // reset feedback
+    const fb = document.getElementById('feedback');
+    fb.style.display = 'none';
+    fb.className = 'feedback';
+    document.getElementById('next-wrap').style.display = 'none';
+    document.getElementById('btn-next').textContent = current === questions.length - 1 ? '結果を見る' : '次の問題へ →';
+  }
+
+  function selectAnswer(idx, btn) {
+    if (answered) return;
+    answered = true;
+    const q = questions[current];
+    const isCorrect = idx === q.correct;
+
+    // style all buttons
+    document.querySelectorAll('.choice-btn').forEach(b => {
+      b.disabled = true;
+      const bi = parseInt(b.dataset.idx);
+      if (bi === q.correct && !isCorrect) b.classList.add('reveal-correct');
+    });
+
+    if (isCorrect) {
+      btn.classList.add('correct');
+      score++;
+      topicScores[q.cat].correct++;
+      showFeedback(true, q.exp);
+    } else {
+      btn.classList.add('wrong');
+      showFeedback(false, q.exp);
+    }
+
+    document.getElementById('q-score-live').textContent = `正解 ${score}問`;
+    document.getElementById('next-wrap').style.display = 'block';
+  }
+
+  function showFeedback(correct, exp) {
+    const fb = document.getElementById('feedback');
+    fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
+    document.getElementById('feedback-title').innerHTML =
+      correct ? '<span class="feedback-icon">✅</span> 正解！' : '<span class="feedback-icon">❌</span> 不正解';
+    document.getElementById('feedback-exp').textContent = exp;
+    fb.style.display = 'block';
+  }
+
+  function nextQuestion() {
+    current++;
+    if (current >= questions.length) {
+      showResult();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function showResult() {
+    document.getElementById('question-area').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'block';
+
+    const pct = Math.round((score / questions.length) * 100);
+    let emoji, grade, comment, gradeColor;
+
+    if (pct === 100) {
+      emoji = '🏆'; grade = '満点！パーフェクト！'; gradeColor = '#d97706';
+      comment = '素晴らしい！全問正解です。行動経済学からPMM、コピーライティングの型まで完全に習得できています。';
+    } else if (pct >= 85) {
+      emoji = '🎉'; grade = 'Excellent！'; gradeColor = '#16a34a';
+      comment = '非常に高いスコアです！ほぼ完璧な理解度。不正解だった問題のページを読み返すと満点を狙えます。';
+    } else if (pct >= 70) {
+      emoji = '👍'; grade = 'Good！'; gradeColor = '#1d4ed8';
+      comment = '基礎的な理解はできています。苦手なカテゴリに戻って復習し、もう一度チャレンジしてみましょう。';
+    } else if (pct >= 50) {
+      emoji = '📖'; grade = 'もう少し！'; gradeColor = '#d97706';
+      comment = '半分は正解できました。各トピックのページを読み返してから再チャレンジしてみてください。';
+    } else {
+      emoji = '💪'; grade = '要復習'; gradeColor = '#dc2626';
+      comment = 'まずは各トピックのページをじっくり読み返してみましょう。ナレッジベースで学んでから再チャレンジ！';
+    }
+
+    document.getElementById('r-emoji').textContent = emoji;
+    document.getElementById('r-score').innerHTML = `${score}<span> / ${questions.length}問</span>`;
+    document.getElementById('r-grade').innerHTML = `<span style="color:${gradeColor}">${grade}</span>（正答率 ${pct}%）`;
+    document.getElementById('r-comment').textContent = comment;
+
+    // topic bars
+    const trEl = document.getElementById('topic-results');
+    trEl.innerHTML = '';
+    Object.keys(CATEGORIES).forEach(k => {
+      const ts = topicScores[k];
+      const tpct = ts.total > 0 ? Math.round((ts.correct / ts.total) * 100) : 0;
+      const cat = CATEGORIES[k];
+      const row = document.createElement('div');
+      row.className = 'topic-result-row';
+      row.innerHTML = `
+        <div class="tr-label">${cat.label}</div>
+        <div class="tr-bar-track">
+          <div class="tr-bar-fill" style="width:0%;background:${cat.color};" data-w="${tpct}"></div>
+        </div>
+        <div class="tr-score">${ts.correct}/${ts.total}</div>
+      `;
+      trEl.appendChild(row);
+    });
+
+    // animate bars
+    setTimeout(() => {
+      document.querySelectorAll('.tr-bar-fill').forEach(el => {
+        el.style.width = el.dataset.w + '%';
+      });
+    }, 100);
+  }
+
+  function retryQuiz() {
+    document.getElementById('result-screen').style.display = 'none';
+    startQuiz();
+  }
+  </script>
+
+</body>
+</html>
